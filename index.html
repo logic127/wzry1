@@ -1,4 +1,4 @@
-﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -2622,13 +2622,44 @@
   }
 
   let lastStateHash = '';
-  // 根据当前模式拉取状态（GitHub 走 raw CDN，本地走 /api/state）
-  async function fetchState() {
-    if (USE_GITHUB) {
-      const res = await fetch(`${GH_RAW}/state.json?t=${Date.now()}`, { cache: 'no-store' });
-      if (!res.ok) throw new Error('state.json not found');
-      return await res.json();
+  // 判断数据是否"有效已分组"
+  function isValidState(data) {
+    return data && data.initialized && data.groups && Object.keys(data.groups).length;
+  }
+
+  // GitHub 模式：多源容错读取（raw CDN 有缓存，可能返回旧数据；
+  // 依次尝试 raw → GitHub API contents，取第一个"已初始化"的数据）
+  async function fetchStateGithub() {
+    const sources = [
+      async () => {
+        const res = await fetch(`${GH_RAW}/state.json?t=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error('raw ' + res.status);
+        return await res.json();
+      },
+      async () => {
+        const res = await fetch(`${GH_API}/state.json?ref=${GH.branch}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error('api ' + res.status);
+        const d = await res.json();
+        const bin = atob(d.content);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return JSON.parse(new TextDecoder().decode(bytes));
+      }
+    ];
+    let lastData = null;
+    for (const src of sources) {
+      try {
+        const data = await src();
+        if (isValidState(data)) return data;   // 拿到有效数据立即返回
+        lastData = data;                        // 记下未初始化的数据作兜底
+      } catch (e) { /* 该源失败，尝试下一个 */ }
     }
+    return lastData;  // 全部源都只拿到未初始化数据（确实还没分组）
+  }
+
+  // 根据当前模式拉取状态
+  async function fetchState() {
+    if (USE_GITHUB) return await fetchStateGithub();
     const res = await fetch('/api/state', { cache: 'no-store' });
     return await res.json();
   }
@@ -2637,7 +2668,7 @@
     try {
       const data = await fetchState();
       lastStateHash = JSON.stringify(data || {});
-      if (data && data.initialized && data.groups && Object.keys(data.groups).length) {
+      if (isValidState(data)) {
         restoreState(data);
       }
     } catch (e) {
@@ -2650,6 +2681,7 @@
   }
 
   // 访客自动刷新：每 15 秒拉取一次，管理员不轮询
+  // 注意：拿到"未初始化"数据时不清空页面（可能是 CDN 旧缓存），保持现状等下次轮询
   setInterval(async () => {
     if (isAdmin()) return;
     try {
@@ -2657,11 +2689,10 @@
       const hash = JSON.stringify(data || {});
       if (hash !== lastStateHash) {
         lastStateHash = hash;
-        if (data && data.initialized && data.groups && Object.keys(data.groups).length) {
+        if (isValidState(data)) {
           restoreState(data);
-        } else {
-          location.reload();
         }
+        // 未初始化数据：不清空、不刷新，避免 CDN 缓存抖动导致页面闪回空白
       }
     } catch (e) { /* 忽略 */ }
   }, 15000);
