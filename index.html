@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -477,7 +477,58 @@
     box-shadow: 0 0 14px rgba(245, 215, 142, 0.4);
   }
 
-  /* 奖项 */
+  /* 可编辑队名输入框（分组卡片头部） */
+  .team-name-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed rgba(201,169,97,0.4);
+    color: var(--gold);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-family: 'Microsoft YaHei', sans-serif;
+    width: 80px;
+    padding: 2px 4px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .team-name-input:focus {
+    border-bottom-color: var(--gold);
+    background: rgba(201,169,97,0.08);
+  }
+  .team-name-input::placeholder {
+    color: rgba(201,169,97,0.35);
+  }
+  body.readonly .team-name-input {
+    border-bottom: none;
+    pointer-events: none;
+    background: transparent;
+  }
+
+  /* 可编辑选手名 */
+  .player-name-edit {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed rgba(200,215,230,0.2);
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'Microsoft YaHei', sans-serif;
+    width: 100%;
+    max-width: 140px;
+    padding: 1px 4px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .player-name-edit:focus {
+    border-bottom-color: var(--ice);
+    background: rgba(127,212,255,0.06);
+  }
+  body.readonly .player-name-edit {
+    border-bottom: none;
+    pointer-events: none;
+    background: transparent;
+  }
+
   .awards-section {
     background: linear-gradient(160deg, rgba(30, 55, 100, 0.6), rgba(12, 24, 50, 0.85));
     border: 1px solid rgba(245, 215, 142, 0.45);
@@ -1331,6 +1382,8 @@
     players: [],
     groups: {},
     isDrawing: false,
+    // 队伍显示名：slotKey(A1/A2/...C3) → 显示名，默认等于slotKey
+    teamNames: {},
     // 小组赛数据：matches[name] = [{ id, p1, p2, winner, s1, s2 }]
     groupMatches: {},
     // 积分：standings[name][player] = { w, l, pts }
@@ -1364,6 +1417,25 @@
     { key: 'B', label: 'B大组', teams: ['B1', 'B2', 'B3', 'B4'], color: '#ff6b6b' },
     { key: 'C', label: 'C大组', teams: ['C1', 'C2', 'C3'], color: '#6ba6ff' }
   ];
+
+  // 队伍显示名映射：slotKey(A1/A2/...C3) → 显示名，默认等于slotKey
+  // 所有渲染队名的地方都通过此函数获取，修改后全局生效
+  function teamName(slot) {
+    return (STATE.teamNames && STATE.teamNames[slot]) || slot;
+  }
+
+  // 设置队伍显示名（管理员专用）
+  function setTeamName(slot, name) {
+    if (!isAdmin()) return;
+    if (!STATE.teamNames) STATE.teamNames = {};
+    const trimmed = name.trim();
+    if (trimmed) {
+      STATE.teamNames[slot] = trimmed;
+    } else {
+      delete STATE.teamNames[slot];
+    }
+    scheduleSave();
+  }
 
   // 元素引用
   const playerInput = document.getElementById('playerInput');
@@ -1416,7 +1488,7 @@
     return groups;
   }
 
-  // 创建分组卡片骨架
+  // 创建分组卡片骨架（含可编辑队名输入框）
   function renderGroupCards() {
     groupsGrid.innerHTML = '';
     GROUP_STRUCTURE.forEach(g => {
@@ -1425,13 +1497,23 @@
       card.id = `group-${g.name}`;
       card.innerHTML = `
         <div class="group-header">
-          <span class="group-name">${g.name}</span>
+          <input class="team-name-input" value="${teamName(g.name)}" placeholder="${g.name}"
+                 data-slot="${g.name}" onchange="onTeamNameChange(this)" onblur="onTeamNameChange(this)">
           <span class="group-tier">${g.tierLabel}</span>
         </div>
         <ul class="player-list" id="players-${g.name}"></ul>
       `;
       groupsGrid.appendChild(card);
     });
+  }
+
+  // 队名输入框变更处理
+  function onTeamNameChange(input) {
+    if (!isAdmin()) return;
+    const slot = input.dataset.slot;
+    setTeamName(slot, input.value);
+    // 刷新所有引用队名的地方
+    refreshAllTeamNameDisplays();
   }
 
   // 缓慢输出（打字机效果）逐个选手展示
@@ -1689,15 +1771,15 @@
       row.className = 'match-row';
       let statusHtml = '';
       if (m.winner) {
-        statusHtml = `<span style="color:#888;font-size:11px;">${m.winner} 胜</span>`;
+        statusHtml = `<span style="color:#888;font-size:11px;">${teamName(m.winner)} 胜</span>`;
       } else {
         statusHtml = `<span style="color:#666;font-size:11px;">未录入</span>`;
       }
       row.innerHTML = `
         <span class="match-no">M${i + 1}</span>
-        <div class="p1 ${m.winner === m.p1 ? 'win' : ''}" data-side="p1" data-group="${groupKey}" data-id="${m.id}">${m.p1}</div>
+        <div class="p1 ${m.winner === m.p1 ? 'win' : ''}" data-side="p1" data-group="${groupKey}" data-id="${m.id}">${teamName(m.p1)}</div>
         <span class="vs-cell">VS</span>
-        <div class="p2 ${m.winner === m.p2 ? 'win' : ''}" data-side="p2" data-group="${groupKey}" data-id="${m.id}">${m.p2}</div>
+        <div class="p2 ${m.winner === m.p2 ? 'win' : ''}" data-side="p2" data-group="${groupKey}" data-id="${m.id}">${teamName(m.p2)}</div>
         <span style="margin-left:auto;">${statusHtml}</span>
         <button class="expand-btn" data-group="${groupKey}" data-id="${m.id}">四维</button>
       `;
@@ -1712,13 +1794,13 @@
       panel.innerHTML = `
         <div class="stats-grid">
           <div class="stats-team ${m.winner === m.p1 ? 'win' : ''}">
-            <div class="stats-team-name">${m.p1}（5人）</div>
+            <div class="stats-team-name">${teamName(m.p1)}（5人）</div>
             <div class="stats-players">
               ${renderPlayerStatsRows(members1, m.stats[m.p1], groupKey, m.id, m.p1)}
             </div>
           </div>
           <div class="stats-team ${m.winner === m.p2 ? 'win' : ''}">
-            <div class="stats-team-name">${m.p2}（5人）</div>
+            <div class="stats-team-name">${teamName(m.p2)}（5人）</div>
             <div class="stats-players">
               ${renderPlayerStatsRows(members2, m.stats[m.p2], groupKey, m.id, m.p2)}
             </div>
@@ -1852,7 +1934,7 @@
       const qualify = idx < 2 ? '<span class="qualify-mark" title="大组前2晋级"></span>' : '';
       tr.innerHTML = `
         <td class="rank ${rankCls}">${idx + 1}</td>
-        <td class="pname">${p.name}${qualify}</td>
+        <td class="pname">${teamName(p.name)}${qualify}</td>
         <td>${p.w}</td>
         <td>${p.l}</td>
         <td class="pts">${p.pts}</td>
@@ -1923,7 +2005,7 @@
       tr.className = cls;
       tr.innerHTML = `
         <td>${idx + 1}</td>
-        <td>${p.name}</td>
+        <td>${teamName(p.name)}</td>
         <td>${p.group}大组</td>
         <td>${p.w}</td>
         <td>${p.l}</td>
@@ -2006,9 +2088,9 @@
                 const done = !!(gm && gm.winner);
                 return `
                   <div class="schedule-match ${done ? 'done' : ''}">
-                    <span class="sm-team ${done && gm.winner === mt.t1 ? 'winner' : ''}">${mt.t1}</span>
+                    <span class="sm-team ${done && gm.winner === mt.t1 ? 'winner' : ''}">${teamName(mt.t1)}</span>
                     <span class="sm-vs">VS</span>
-                    <span class="sm-team ${done && gm.winner === mt.t2 ? 'winner' : ''}">${mt.t2}</span>
+                    <span class="sm-team ${done && gm.winner === mt.t2 ? 'winner' : ''}">${teamName(mt.t2)}</span>
                     <span class="sm-status ${done ? 'done' : 'pending'}">${done ? '✓ 已结束' : '待赛'}</span>
                     <span class="sm-caster">${mt.caster}</span>
                   </div>`;
@@ -2159,7 +2241,7 @@
         const btn = document.createElement('div');
         const isWin = wt.winner === t;
         btn.className = 'wc-tiebreak-team' + (isWin ? ' win' : '');
-        btn.textContent = t;
+        btn.textContent = teamName(t);
         btn.dataset.team = t;
         btn.addEventListener('click', onPickWildcardTiebreakWinner);
         teamsGrid.appendChild(btn);
@@ -2168,7 +2250,7 @@
       const hint = document.createElement('div');
       hint.style.cssText = 'text-align:center; margin-top:8px; font-size:12px;';
       hint.innerHTML = wt.winner
-        ? `<span style="color:#ffd700;">✓ 加赛胜者：<strong>${wt.winner}</strong>（获得外卡资格）</span>`
+        ? `<span style="color:#ffd700;">✓ 加赛胜者：<strong>${teamName(wt.winner)}</strong>（获得外卡资格）</span>`
         : '<span style="color:#888;">点击队伍名标记为加赛胜者</span>';
       wcBody.appendChild(hint);
     } else {
@@ -2266,11 +2348,11 @@
       const hasStatsBtn = matchEl.querySelector('.expand-btn');
       matchEl.innerHTML = `<span class="match-tag">${tagText}</span>
         <div class="match-team ${k.winner === k.t1 && k.t1 ? 'win' : ''} ${!k.t1 ? 'empty' : ''}" data-match="${mId}" data-side="t1">
-          <span class="mt-name">${k.t1 || '—'}</span><span class="mt-seed">${SEED_LABEL[seedT1] || ''}</span>
+          <span class="mt-name">${k.t1 ? teamName(k.t1) : '—'}</span><span class="mt-seed">${SEED_LABEL[seedT1] || ''}</span>
         </div>
         <div class="match-vs">VS</div>
         <div class="match-team ${k.winner === k.t2 && k.t2 ? 'win' : ''} ${!k.t2 ? 'empty' : ''}" data-match="${mId}" data-side="t2">
-          <span class="mt-name">${k.t2 || '—'}</span><span class="mt-seed">${SEED_LABEL[seedT2] || ''}</span>
+          <span class="mt-name">${k.t2 ? teamName(k.t2) : '—'}</span><span class="mt-seed">${SEED_LABEL[seedT2] || ''}</span>
         </div>
         ${k.t1 && k.t2 ? `<button class="expand-btn" data-match="${mId}">四维录入</button>` : ''}
       `;
@@ -2358,17 +2440,17 @@
     const members1 = getTeamMembers(k.t1);
     const members2 = getTeamMembers(k.t2);
     const tagText = mId === 'TF' ? '3-4名争夺' : (mId === 'FINAL' ? '总决赛' : mId);
-    title.textContent = `${tagText} · 四维录入（${k.t1} VS ${k.t2}）`;
+    title.textContent = `${tagText} · 四维录入（${teamName(k.t1)} VS ${teamName(k.t2)}）`;
     content.innerHTML = `
       <div class="stats-grid">
         <div class="stats-team ${k.winner === k.t1 ? 'win' : ''}">
-          <div class="stats-team-name">${k.t1}（5人）</div>
+          <div class="stats-team-name">${teamName(k.t1)}（5人）</div>
           <div class="stats-players">
             ${renderKnockoutPlayerRows(members1, k.stats[k.t1], mId, k.t1)}
           </div>
         </div>
         <div class="stats-team ${k.winner === k.t2 ? 'win' : ''}">
-          <div class="stats-team-name">${k.t2}（5人）</div>
+          <div class="stats-team-name">${teamName(k.t2)}（5人）</div>
           <div class="stats-players">
             ${renderKnockoutPlayerRows(members2, k.stats[k.t2], mId, k.t2)}
           </div>
@@ -2449,7 +2531,7 @@
       tr.className = r.cls;
       tr.innerHTML = `
         <td class="rank-cell">第${r.rank}名</td>
-        <td>${r.team || '—'}</td>
+        <td>${r.team ? teamName(r.team) : '—'}</td>
         <td style="color:#888;font-size:12px;">${r.src}</td>
       `;
       body.appendChild(tr);
@@ -2749,21 +2831,58 @@
       card.id = `group-${g.name}`;
       card.innerHTML = `
         <div class="group-header">
-          <span class="group-name">${g.name}</span>
+          <input class="team-name-input" value="${teamName(g.name)}" placeholder="${g.name}"
+                 data-slot="${g.name}" onchange="onTeamNameChange(this)" onblur="onTeamNameChange(this)">
           <span class="group-tier">${g.tierLabel}</span>
         </div>
         <ul class="player-list">
-          ${members.map((p, i) => `<li class="player-item show"><span class="player-num">${i + 1}.</span><span class="player-name-text">${p}</span></li>`).join('')}
+          ${members.map((p, i) => `<li class="player-item show"><span class="player-num">${i + 1}.</span><input class="player-name-edit" value="${p}" data-slot="${g.name}" data-idx="${i}" onchange="onPlayerNameChange(this)" onblur="onPlayerNameChange(this)"></li>`).join('')}
         </ul>
       `;
       groupsGrid.appendChild(card);
     });
   }
 
+  // 选手名输入框变更处理
+  function onPlayerNameChange(input) {
+    if (!isAdmin()) return;
+    const slot = input.dataset.slot;
+    const idx = parseInt(input.dataset.idx);
+    if (STATE.groups[slot] && STATE.groups[slot].members) {
+      STATE.groups[slot].members[idx] = input.value;
+      scheduleSave();
+    }
+  }
+
+  // 刷新所有引用队名的地方（队名修改后调用）
+  function refreshAllTeamNameDisplays() {
+    // 1. 更新分组卡片头部的队名输入框值
+    document.querySelectorAll('.team-name-input').forEach(input => {
+      const slot = input.dataset.slot;
+      if (slot) input.value = teamName(slot);
+    });
+    // 2. 重绘小组赛对阵列表
+    ['A', 'B', 'C'].forEach(gk => {
+      if (STATE.groupMatches[gk]) renderMatchList(gk);
+    });
+    // 3. 重绘积分榜
+    ['A', 'B', 'C'].forEach(gk => {
+      if (STATE.standings[gk]) renderStandings(gk);
+    });
+    renderOverallBoard();
+    // 4. 重绘淘汰赛对阵表
+    renderKnockoutBracket();
+    // 5. 重绘赛程表
+    renderSchedule();
+    // 6. 重绘奖项
+    renderAwards();
+  }
+
   // 从服务器恢复完整赛事状态
   function restoreState(data) {
     STATE.players = data.players || [];
     STATE.groups = data.groups || {};
+    STATE.teamNames = data.teamNames || {};
     STATE.groupMatches = data.groupMatches || {};
     STATE.standings = data.standings || {};
     STATE.knockout = data.knockout || {};
@@ -2777,6 +2896,7 @@
       statusMsg.innerHTML = '✓ 分组结果已固定（由管理员抽签生成）';
       initGroupStage(true);   // 重建小组赛界面并保留已录入数据
       renderKnockoutBracket();
+      renderSchedule();
       renderAwards();
     }
   }
