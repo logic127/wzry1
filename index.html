@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -487,7 +487,8 @@
     font-weight: 700;
     letter-spacing: 2px;
     font-family: 'Microsoft YaHei', sans-serif;
-    width: 80px;
+    min-width: 80px;
+    max-width: 140px;
     padding: 2px 4px;
     outline: none;
     transition: border-color 0.2s;
@@ -718,11 +719,11 @@
     padding: 6px 0;
     border-bottom: 1px dotted rgba(127, 212, 255, 0.18);
     font-size: 13px;
-    flex-wrap: wrap;
   }
   .match-row:last-child { border-bottom: none; }
   .match-row .p1, .match-row .p2 {
     flex: 1;
+    min-width: 80px;
     padding: 6px 10px;
     border-radius: 4px;
     cursor: pointer;
@@ -732,6 +733,9 @@
     background: rgba(10, 22, 46, 0.5);
     color: var(--text);
     user-select: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .match-row .p1:hover, .match-row .p2:hover {
     background: rgba(127, 212, 255, 0.12);
