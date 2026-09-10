@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -487,9 +487,9 @@
     font-weight: 700;
     letter-spacing: 2px;
     font-family: 'Microsoft YaHei', sans-serif;
-    min-width: 120px;
-    width: 50%;
-    max-width: 220px;
+    min-width: 165px;
+    width: 55%;
+    max-width: 260px;
     padding: 2px 4px;
     outline: none;
     transition: border-color 0.2s;
@@ -1503,7 +1503,7 @@
       card.innerHTML = `
         <div class="group-header">
           <input class="team-name-input" value="${teamName(g.name)}" placeholder="${g.name}"
-                 data-slot="${g.name}" onchange="onTeamNameChange(this)" onblur="onTeamNameChange(this)">
+                 data-slot="${g.name}" onchange="onTeamNameChange(this)">
           <span class="group-tier">${g.tierLabel}</span>
         </div>
         <ul class="player-list" id="players-${g.name}"></ul>
@@ -1517,10 +1517,7 @@
     if (!isAdmin()) return;
     const slot = input.dataset.slot;
     setTeamName(slot, input.value);
-    // 重绘分组卡片（让输入框显示最新值）+ 刷新所有引用队名的地方
-    if (STATE.groups && Object.keys(STATE.groups).length) {
-      renderGroupsStatic(STATE.groups);
-    }
+    // 输入框本身已显示最新值，仅刷新下游引用队名的地方
     refreshAllTeamNameDisplays();
   }
 
@@ -2774,8 +2771,10 @@
   function buildStatePayload() {
     return {
       initialized: true,
+      savedAt: Date.now(),
       players: STATE.players,
       groups: STATE.groups,
+      teamNames: STATE.teamNames,
       groupMatches: STATE.groupMatches,
       standings: STATE.standings,
       knockout: STATE.knockout,
@@ -2844,11 +2843,11 @@
       card.innerHTML = `
         <div class="group-header">
           <input class="team-name-input" value="${teamName(g.name)}" placeholder="${g.name}"
-                 data-slot="${g.name}" onchange="onTeamNameChange(this)" onblur="onTeamNameChange(this)">
+                 data-slot="${g.name}" onchange="onTeamNameChange(this)">
           <span class="group-tier">${g.tierLabel}</span>
         </div>
         <ul class="player-list">
-          ${members.map((p, i) => `<li class="player-item show"><span class="player-num">${i + 1}.</span><input class="player-name-edit" value="${p}" data-slot="${g.name}" data-idx="${i}" onchange="onPlayerNameChange(this)" onblur="onPlayerNameChange(this)"></li>`).join('')}
+          ${members.map((p, i) => `<li class="player-item show"><span class="player-num">${i + 1}.</span><input class="player-name-edit" value="${p}" data-slot="${g.name}" data-idx="${i}" onchange="onPlayerNameChange(this)"></li>`).join('')}
         </ul>
       `;
       groupsGrid.appendChild(card);
@@ -2864,10 +2863,7 @@
       STATE.groups[slot].members[idx] = input.value;
       scheduleSave();
     }
-    // 重绘分组卡片（让输入框显示最新值）
-    if (STATE.groups && Object.keys(STATE.groups).length) {
-      renderGroupsStatic(STATE.groups);
-    }
+    // 输入框本身已显示最新值，无需重绘整个分组卡片
   }
 
   // 刷新所有引用队名的地方（队名修改后调用）
@@ -2931,31 +2927,35 @@
   }
 
   // GitHub 模式：多源容错读取。
-  // 数据源优先级：raw CDN（快但有~5分钟缓存）→ GitHub API（权威实时）→ Pages 同源文件（兜底）
+  // 数据源优先级：管理员→GitHub API（权威实时，无CDN缓存）；访客→raw CDN（快但有~5分钟缓存）→ GitHub API → Pages 同源文件（兜底）
   // 任一源拿到"已初始化"数据立即返回；某源超时/失败自动尝试下一个。
+  async function fetchGithubApi() {
+    const res = await fetchWithTimeout(`${GH_API}/state.json?ref=${GH.branch}`, 8000);
+    if (!res.ok) throw new Error('api ' + res.status);
+    const d = await res.json();
+    const bin = atob(d.content);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }
+
   async function fetchStateGithub() {
-    const sources = [
+    const sources = [];
+    if (isAdmin()) sources.push(fetchGithubApi);
+    sources.push(
       async () => {
         const res = await fetchWithTimeout(`${GH_RAW}/state.json?t=${Date.now()}`, 8000);
         if (!res.ok) throw new Error('raw ' + res.status);
         return await res.json();
       },
-      async () => {
-        const res = await fetchWithTimeout(`${GH_API}/state.json?ref=${GH.branch}`, 8000);
-        if (!res.ok) throw new Error('api ' + res.status);
-        const d = await res.json();
-        const bin = atob(d.content);
-        const bytes = new Uint8Array(bin.length);
-        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-        return JSON.parse(new TextDecoder().decode(bytes));
-      },
+      fetchGithubApi,
       async () => {
         const base = window.location.href.split('?')[0].replace(/\/$/, '');
         const res = await fetchWithTimeout(`${base}/state.json?t=${Date.now()}`, 8000);
         if (!res.ok) throw new Error('pages ' + res.status);
         return await res.json();
       }
-    ];
+    );
     let lastData = null;
     for (const src of sources) {
       try {
