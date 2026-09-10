@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -753,6 +753,21 @@
   .match-row .vs-cell { color: var(--text-muted); font-size: 11px; width: 24px; text-align: center; }
   .match-row .match-no { color: var(--text-muted); font-size: 11px; width: 28px; }
 
+  /* 可点击 VS：点击展开/收起四维数据 */
+  .vs-toggle {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s, text-shadow 0.2s;
+    border-radius: 3px;
+  }
+  .vs-toggle:hover {
+    color: var(--gold);
+    text-shadow: 0 0 6px rgba(245, 215, 142, 0.5);
+  }
+  .vs-toggle.active {
+    color: var(--gold);
+  }
+
   /* 通用展开按钮 */
   .expand-btn {
     background: rgba(30, 60, 110, 0.55);
@@ -1064,6 +1079,7 @@
   /* ===== 访客只读模式 ===== */
   body.readonly .input-section { display: none; }
   body.readonly .expand-btn { display: none !important; }
+  body.readonly .stat-input { pointer-events: none; opacity: 0.85; }
   body.readonly .btn-area { display: none; }
   body.readonly .match-team,
   body.readonly .match-row .p1,
@@ -1783,7 +1799,7 @@
       row.innerHTML = `
         <span class="match-no">M${i + 1}</span>
         <div class="p1 ${m.winner === m.p1 ? 'win' : ''}" data-side="p1" data-group="${groupKey}" data-id="${m.id}">${teamName(m.p1)}</div>
-        <span class="vs-cell">VS</span>
+        <span class="vs-cell vs-toggle" data-group="${groupKey}" data-id="${m.id}" title="点击展开/收起四维数据">VS</span>
         <div class="p2 ${m.winner === m.p2 ? 'win' : ''}" data-side="p2" data-group="${groupKey}" data-id="${m.id}">${teamName(m.p2)}</div>
         <span style="margin-left:auto;">${statusHtml}</span>
         <button class="expand-btn" data-group="${groupKey}" data-id="${m.id}">四维</button>
@@ -1821,8 +1837,8 @@
     listEl.querySelectorAll('.p1, .p2').forEach(el => {
       el.addEventListener('click', onPickWinner);
     });
-    // 绑定展开/收起
-    listEl.querySelectorAll('.expand-btn').forEach(el => {
+    // 绑定展开/收起（四维按钮 + VS 均可切换）
+    listEl.querySelectorAll('.expand-btn, .vs-toggle').forEach(el => {
       el.addEventListener('click', onToggleStats);
     });
     // 绑定数据输入
@@ -1860,7 +1876,13 @@
     const panel = document.getElementById(`stats-${groupKey}-${matchId}`);
     if (!panel) return;
     panel.classList.toggle('active');
-    e.currentTarget.textContent = panel.classList.contains('active') ? '收起' : '四维';
+    const active = panel.classList.contains('active');
+    // 同步该行内所有切换控件（VS 与四维按钮）的状态
+    const row = e.currentTarget.closest('.match-row');
+    if (row) {
+      row.querySelectorAll('.expand-btn').forEach(b => b.textContent = active ? '收起' : '四维');
+      row.querySelectorAll('.vs-toggle').forEach(v => v.classList.toggle('active', active));
+    }
   }
 
   // 录入四维数据（按队员）
@@ -2355,7 +2377,7 @@
         <div class="match-team ${k.winner === k.t1 && k.t1 ? 'win' : ''} ${!k.t1 ? 'empty' : ''}" data-match="${mId}" data-side="t1">
           <span class="mt-name">${k.t1 ? teamName(k.t1) : '—'}</span><span class="mt-seed">${SEED_LABEL[seedT1] || ''}</span>
         </div>
-        <div class="match-vs">VS</div>
+        <div class="match-vs vs-toggle" data-match="${mId}" title="点击展开四维数据">VS</div>
         <div class="match-team ${k.winner === k.t2 && k.t2 ? 'win' : ''} ${!k.t2 ? 'empty' : ''}" data-match="${mId}" data-side="t2">
           <span class="mt-name">${k.t2 ? teamName(k.t2) : '—'}</span><span class="mt-seed">${SEED_LABEL[seedT2] || ''}</span>
         </div>
@@ -2365,7 +2387,7 @@
       matchEl.querySelectorAll('.match-team').forEach(el => {
         el.addEventListener('click', onPickKnockoutWinner);
       });
-      matchEl.querySelectorAll('.expand-btn').forEach(el => {
+      matchEl.querySelectorAll('.expand-btn, .vs-toggle').forEach(el => {
         el.addEventListener('click', onOpenKnockoutStats);
       });
     };
