@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -990,6 +990,73 @@
     .header-sponsor { font-size: 14px; letter-spacing: 3px; }
     .groups-grid { grid-template-columns: 1fr; }
     .format-stages { flex-direction: column; }
+  }
+
+  /* ===== 手机端文字排版优化（≤600px） ===== */
+  @media (max-width: 600px) {
+    /* 容器与面板收窄，减少手机留白 */
+    .container { padding: 18px 12px 50px; }
+    .input-section, .format-section, .bracket-section, .groupstage-section, .schedule-section {
+      padding: 16px 12px;
+      margin-bottom: 20px;
+    }
+
+    /* 头部文字 */
+    .header { padding: 26px 10px 20px; }
+    .header h1 { font-size: 26px; letter-spacing: 3px; line-height: 1.35; }
+    .header-slogan { font-size: 16px; letter-spacing: 1px; }
+    .header-sponsor { font-size: 11px; letter-spacing: 1px; }
+    .section-title { font-size: 18px; letter-spacing: 1px; }
+
+    /* 分组卡片 */
+    .team-name-input { font-size: 16px; min-width: 90px; }
+    .player-item { font-size: 14px; }
+    .player-name-edit { font-size: 14px; }
+
+    /* 小组赛对阵行 */
+    .match-row { flex-wrap: wrap; font-size: 13px; }
+    .match-row .match-no { width: 22px; font-size: 10px; }
+    .match-row .p1, .match-row .p2 { min-width: 0; padding: 8px 6px; font-size: 13px; }
+    .match-row .vs-cell { width: 22px; font-size: 10px; }
+    .stats-team-name { font-size: 13px; }
+    .psr-name { font-size: 12px; }
+
+    /* 小组赛录入大区标题区 */
+    .gs-sub-title { font-size: 14px; }
+
+    /* 积分榜表格 */
+    .standings-table, .overall-table { font-size: 13px; }
+    .standings-table th, .standings-table td,
+    .overall-table th, .overall-table td { padding: 7px 6px; font-size: 12px; }
+
+    /* 淘汰赛对阵卡片 */
+    .bracket { min-width: 0; width: 100%; overflow-x: auto; }
+    .match { min-width: 0; width: 100%; padding: 8px 10px; }
+    .match-team { font-size: 12px; }
+    .mt-name { max-width: 105px; word-break: break-all; }
+    .round-title { font-size: 14px; }
+
+    /* 赛程表 */
+    .schedule-match { gap: 6px; padding: 8px 10px; font-size: 13px; }
+    .schedule-match .sm-team { min-width: 24px; font-size: 13px; }
+    .schedule-match .sm-caster { font-size: 11px; letter-spacing: 0; }
+    .schedule-time { font-size: 12px; }
+
+    /* 奖项卡片 */
+    .award-card .award-title { font-size: 15px; }
+    .award-card .award-desc { font-size: 10px; }
+
+    /* 轮询/提示文字 */
+    .status-msg { font-size: 13px; }
+
+    /* 分享条 */
+    .share-bar { font-size: 12px; }
+    .share-bar .share-url {
+      flex: 1 1 100%;
+      font-size: 11px;
+      word-break: break-all;
+      order: 1;
+    }
   }
 
   /* 管理员登录按钮 */
