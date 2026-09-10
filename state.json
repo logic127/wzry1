@@ -1,5 +1,6 @@
 {
   "initialized": true,
+  "savedAt": 1789007008472,
   "players": [
     "悠悠我心",
     "小新少爷",
@@ -190,6 +191,9 @@
         "秋水"
       ]
     }
+  },
+  "teamNames": {
+    "A1": "3509最有种队"
   },
   "groupMatches": {
     "A": [
