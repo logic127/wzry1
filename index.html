@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -2634,10 +2634,10 @@
 
   // 渲染个人奖项
   function renderAwards() {
-    // 汇总所有个人选手的数据：totals[队员名] = { ratingSum, ratingCount, k, a, d }
+    // 汇总所有个人选手的数据：totals[队员名] = { ratingSum, ratingCount, k, a, d, mc }
     const totals = {};
     function ensure(name) {
-      if (!totals[name]) totals[name] = { ratingSum: 0, ratingCount: 0, k: 0, a: 0, d: 0 };
+      if (!totals[name]) totals[name] = { ratingSum: 0, ratingCount: 0, k: 0, a: 0, d: 0, mc: 0 };
       return totals[name];
     }
     function addStat(name, s) {
@@ -2648,6 +2648,7 @@
       const kk = parseInt(s.k, 10); if (!isNaN(kk)) t.k += kk;
       const aa = parseInt(s.a, 10); if (!isNaN(aa)) t.a += aa;
       const dd = parseInt(s.d, 10); if (!isNaN(dd)) t.d += dd;
+      t.mc++; // 每场比赛该选手出现记为一场
     }
     // 小组赛：m.stats[队伍][队员] = {...}
     TIERS.forEach(tier => {
@@ -2702,17 +2703,21 @@
         ? `平均评分：${ratingWinner.avgRating.toFixed(2)}（共${ratingWinner.ratingCount}场）`
         : '平均评分：—');
 
-    // 最高击杀
-    const killsWinner = list.slice().sort((a, b) => b.k - a.k || a.name.localeCompare(b.name))[0];
+    // 最高击杀（按平均场均击杀）
+    const killsWinner = list.slice().sort((a, b) => ((b.mc ? b.k / b.mc : 0) - (a.mc ? a.k / a.mc : 0)) || a.name.localeCompare(b.name))[0];
     setAward('award-kills', 'award-kills-stat',
       killsWinner && killsWinner.k > 0 ? killsWinner : null,
-      killsWinner && killsWinner.k > 0 ? `总击杀：${killsWinner.k}` : '总击杀：—');
+      killsWinner && killsWinner.k > 0
+        ? `场均击杀：${(killsWinner.k / killsWinner.mc).toFixed(2)}（总${killsWinner.k}击/${killsWinner.mc}场）`
+        : '场均击杀：—');
 
-    // 最佳辅助
-    const assistsWinner = list.slice().sort((a, b) => b.a - a.a || a.name.localeCompare(b.name))[0];
+    // 最佳辅助（按平均场均助攻）
+    const assistsWinner = list.slice().sort((a, b) => ((b.mc ? b.a / b.mc : 0) - (a.mc ? a.a / a.mc : 0)) || a.name.localeCompare(b.name))[0];
     setAward('award-assists', 'award-assists-stat',
       assistsWinner && assistsWinner.a > 0 ? assistsWinner : null,
-      assistsWinner && assistsWinner.a > 0 ? `总助攻：${assistsWinner.a}` : '总助攻：—');
+      assistsWinner && assistsWinner.a > 0
+        ? `场均助攻：${(assistsWinner.a / assistsWinner.mc).toFixed(2)}（总${assistsWinner.a}助/${assistsWinner.mc}场）`
+        : '场均助攻：—');
 
     // 超鬼奖（死亡最多）
     const deathsWinner = list.slice().sort((a, b) => b.d - a.d || a.name.localeCompare(b.name))[0];
