@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -2895,6 +2895,7 @@
     STATE.players = data.players || [];
     STATE.groups = data.groups || {};
     STATE.teamNames = data.teamNames || {};
+    STATE.savedAt = data.savedAt || 0;
     STATE.groupMatches = data.groupMatches || {};
     STATE.standings = data.standings || {};
     STATE.knockout = data.knockout || {};
@@ -2939,23 +2940,34 @@
     return JSON.parse(new TextDecoder().decode(bytes));
   }
 
-  async function fetchStateGithub() {
+  async function fetchGithubRaw() {
+    const res = await fetchWithTimeout(`${GH_RAW}/state.json?t=${Date.now()}`, 8000);
+    if (!res.ok) throw new Error('raw ' + res.status);
+    return await res.json();
+  }
+
+  async function fetchGithubPages() {
+    const base = window.location.href.split('?')[0].replace(/\/$/, '');
+    const res = await fetchWithTimeout(`${base}/state.json?t=${Date.now()}`, 8000);
+    if (!res.ok) throw new Error('pages ' + res.status);
+    return await res.json();
+  }
+
+  // preferFresh=true（页面首次加载/刷新）：并行拉 raw+API，按 savedAt 取更新者，绕开 CDN 旧缓存
+  async function fetchStateGithub(preferFresh) {
+    if (preferFresh) {
+      const results = await Promise.allSettled([fetchGithubRaw(), fetchGithubApi(), fetchGithubPages()]);
+      let best = null;
+      for (const r of results) {
+        if (r.status === 'fulfilled' && isValidState(r.value)) {
+          if (!best || (r.value.savedAt || 0) > (best.savedAt || 0)) best = r.value;
+        }
+      }
+      if (best) return best;
+    }
     const sources = [];
     if (isAdmin()) sources.push(fetchGithubApi);
-    sources.push(
-      async () => {
-        const res = await fetchWithTimeout(`${GH_RAW}/state.json?t=${Date.now()}`, 8000);
-        if (!res.ok) throw new Error('raw ' + res.status);
-        return await res.json();
-      },
-      fetchGithubApi,
-      async () => {
-        const base = window.location.href.split('?')[0].replace(/\/$/, '');
-        const res = await fetchWithTimeout(`${base}/state.json?t=${Date.now()}`, 8000);
-        if (!res.ok) throw new Error('pages ' + res.status);
-        return await res.json();
-      }
-    );
+    sources.push(fetchGithubRaw, fetchGithubApi, fetchGithubPages);
     let lastData = null;
     for (const src of sources) {
       try {
@@ -2968,15 +2980,15 @@
   }
 
   // 根据当前模式拉取状态
-  async function fetchState() {
-    if (USE_GITHUB) return await fetchStateGithub();
+  async function fetchState(preferFresh) {
+    if (USE_GITHUB) return await fetchStateGithub(preferFresh);
     const res = await fetch('/api/state', { cache: 'no-store' });
     return await res.json();
   }
 
   async function loadState() {
     try {
-      const data = await fetchState();
+      const data = await fetchState(true);   // 首次加载/刷新：并行多源取最新，绕开CDN旧缓存
       lastStateHash = JSON.stringify(data || {});
       if (isValidState(data)) {
         restoreState(data);
@@ -2992,17 +3004,20 @@
 
   // 访客自动刷新：每 15 秒拉取一次，管理员不轮询
   // 注意：拿到"未初始化"数据时不清空页面（可能是 CDN 旧缓存），保持现状等下次轮询
+  // savedAt 新鲜度保护：旧缓存数据（savedAt 更小）不会覆盖当前更新的数据
   setInterval(async () => {
     if (isAdmin()) return;
     try {
       const data = await fetchState();
+      if (!isValidState(data)) return;
+      const incoming = data.savedAt || 0;
+      const current = STATE.savedAt || 0;
+      // 已有带时间戳的数据时，更旧的或无时间戳的旧缓存一律忽略
+      if (current && (!incoming || incoming < current)) return;
       const hash = JSON.stringify(data || {});
       if (hash !== lastStateHash) {
         lastStateHash = hash;
-        if (isValidState(data)) {
-          restoreState(data);
-        }
-        // 未初始化数据：不清空、不刷新，避免 CDN 缓存抖动导致页面闪回空白
+        restoreState(data);
       }
     } catch (e) { /* 忽略 */ }
   }, 15000);
