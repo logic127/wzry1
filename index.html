@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -3042,30 +3042,22 @@
     return await res.json();
   }
 
-  // preferFresh=true（页面首次加载/刷新）：并行拉 raw+API，按 savedAt 取更新者，绕开 CDN 旧缓存
+  // GitHub 模式：并行多源读取，按 savedAt 时间戳取最新，绕开 CDN 旧缓存。
+  // 源选择：
+  //  - Pages 同源 state.json（部署更新约1分钟，最接近实时，访客优先）
+  //  - raw CDN（快但有约5分钟缓存）
+  //  - GitHub API（权威实时，未认证限额60次/小时）——仅首次加载/管理员使用，避免观众轮询触发限流
   async function fetchStateGithub(preferFresh) {
-    if (preferFresh) {
-      const results = await Promise.allSettled([fetchGithubRaw(), fetchGithubApi(), fetchGithubPages()]);
-      let best = null;
-      for (const r of results) {
-        if (r.status === 'fulfilled' && isValidState(r.value)) {
-          if (!best || (r.value.savedAt || 0) > (best.savedAt || 0)) best = r.value;
-        }
+    const candidates = [fetchGithubPages(), fetchGithubRaw()];
+    if (preferFresh || isAdmin()) candidates.push(fetchGithubApi());
+    const results = await Promise.allSettled(candidates);
+    let best = null;
+    for (const r of results) {
+      if (r.status === 'fulfilled' && isValidState(r.value)) {
+        if (!best || (r.value.savedAt || 0) > (best.savedAt || 0)) best = r.value;
       }
-      if (best) return best;
     }
-    const sources = [];
-    if (isAdmin()) sources.push(fetchGithubApi);
-    sources.push(fetchGithubRaw, fetchGithubApi, fetchGithubPages);
-    let lastData = null;
-    for (const src of sources) {
-      try {
-        const data = await src();
-        if (isValidState(data)) return data;   // 拿到有效数据立即返回
-        lastData = data;                        // 记下未初始化的数据作兜底
-      } catch (e) { /* 该源失败/超时，尝试下一个 */ }
-    }
-    return lastData;  // 全部源都只拿到未初始化数据（确实还没分组）
+    return best;  // 全部失败/未初始化时返回 null，调用方自行兜底
   }
 
   // 根据当前模式拉取状态
