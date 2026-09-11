@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -2805,13 +2805,18 @@
 
   async function onAdminFabClick() {
     if (isAdmin()) {
-      // 退出前强制把最新页面数据推送到云端，避免 400ms 防抖内未保存的编辑丢失
+      // 退出前强制把最新页面数据推送到云端，避免防抖窗口/飞行中的保存丢失
       clearTimeout(saveTimer);
-      const ok = await saveState();
+      let ok = true;
+      // 等待正在飞行的保存结束（其完成后会自动补发 savePending 的最新数据）
+      for (let i = 0; i < 50 && saveInProgress; i++) {
+        await new Promise(r => setTimeout(r, 200));
+      }
+      if (stateDirty || savePending) ok = await saveState();
       ADMIN_KEY = '';
       sessionStorage.removeItem('wzry_admin_key');
       applyMode();
-      if (!ok) alert('退出前数据同步失败，请检查网络后重新登录管理员模式再试（本地修改仍保留在当前页面）');
+      if (!ok || stateDirty) alert('退出前数据同步失败，请检查网络后重新登录管理员模式再试（本地修改仍保留在当前页面）');
       return;
     }
     if (USE_GITHUB) {
@@ -2860,8 +2865,12 @@
   }
 
   let saveTimer = null;
+  let saveInProgress = false; // 是否有保存请求正在飞行
+  let savePending = false;    // 保存期间是否又产生了新修改
+  let stateDirty = false;     // 是否存在尚未成功保存到云端的本地修改
   function scheduleSave() {
     if (!isAdmin()) return;
+    stateDirty = true;
     clearTimeout(saveTimer);
     saveTimer = setTimeout(saveState, 400);
   }
@@ -2890,46 +2899,80 @@
   }
 
   // GitHub 模式：把 state.json 写入仓库（已存在则更新 sha，不存在则创建）
+  // 遇到 409（sha 已过期，多为并发保存导致）时重新拉取 sha 并重试
+  let ghStateSha = null; // 缓存上次写入后的 sha，省去每次保存前的 GET
   async function saveToGithub(payload) {
     const content = utf8ToBase64(JSON.stringify(payload, null, 2));
-    let sha = null;
-    try {
-      const getRes = await fetch(`${GH_API}/state.json?ref=${GH.branch}`, {
-        headers: { 'Authorization': `token ${ADMIN_KEY}` }
+    const fetchSha = async () => {
+      try {
+        const getRes = await fetch(`${GH_API}/state.json?ref=${GH.branch}`, {
+          headers: { 'Authorization': `token ${ADMIN_KEY}` }
+        });
+        if (getRes.ok) return (await getRes.json()).sha || null;
+      } catch (e) { /* 文件不存在时返回 null，走创建 */ }
+      return null;
+    };
+    let sha = ghStateSha;
+    if (sha === null) sha = await fetchSha();
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const body = { message: 'update tournament state', content, branch: GH.branch };
+      if (sha) body.sha = sha;
+      const res = await fetch(`${GH_API}/state.json`, {
+        method: 'PUT',
+        headers: { 'Authorization': `token ${ADMIN_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
       });
-      if (getRes.ok) {
-        const d = await getRes.json();
-        sha = d.sha;
+      if (res.ok) {
+        try { ghStateSha = (await res.json()).content.sha; } catch (e) { ghStateSha = null; }
+        return;
       }
-    } catch (e) { /* 文件不存在时 sha 为 null，走创建 */ }
-    const body = { message: 'update tournament state', content, branch: GH.branch };
-    if (sha) body.sha = sha;
-    const res = await fetch(`${GH_API}/state.json`, {
-      method: 'PUT',
-      headers: { 'Authorization': `token ${ADMIN_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) throw new Error('GitHub save failed: ' + res.status);
+      if (res.status === 409 || res.status === 412) {
+        // sha 过期：重新读取最新 sha 后重试
+        ghStateSha = null;
+        sha = await fetchSha();
+        await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
+        continue;
+      }
+      throw new Error('GitHub save failed: ' + res.status);
+    }
+    throw new Error('GitHub save failed after retries (conflict)');
   }
 
   async function saveState() {
     if (!isAdmin()) return false;
-    const payload = buildStatePayload();
+    if (saveInProgress) { savePending = true; return true; } // 飞行中的保存完成后会带上最新数据
+    saveInProgress = true;
+    let done = false;
     try {
-      if (USE_GITHUB) {
-        await saveToGithub(payload);
-      } else {
-        const res = await fetch('/api/save', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY },
-          body: JSON.stringify(payload)
-        });
-        if (!res.ok) throw new Error('local save failed: ' + res.status);
-      }
+      do {
+        savePending = false;
+        const payload = buildStatePayload(); // 每次都用最新 STATE，保证不丢编辑
+        if (USE_GITHUB) {
+          await saveToGithub(payload);
+        } else {
+          const res = await fetch('/api/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error('local save failed: ' + res.status);
+        }
+        stateDirty = false;
+      } while (savePending);
+      done = true;
       return true;
     } catch (e) {
       console.warn('保存失败', e);
+      stateDirty = true;
       return false;
+    } finally {
+      saveInProgress = false;
+      savePending = false;
+      if (!done && isAdmin()) {
+        // 未全部保存成功：2 秒后自动重试，直到成功或用户退出
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(saveState, 2000);
+      }
     }
   }
 
