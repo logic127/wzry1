@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -992,6 +992,66 @@
     .format-stages { flex-direction: column; }
   }
 
+  /* ===== 红蓝分组 ===== */
+  .rb-section {
+    background: var(--panel);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 30px rgba(0, 8, 30, 0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  .rb-inputs { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
+  .rb-input {
+    flex: 1; min-width: 160px;
+    background: rgba(6, 15, 34, 0.6);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-size: 16px;
+    font-family: inherit;
+  }
+  .rb-input:focus { outline: none; border-color: var(--ice); box-shadow: 0 0 10px rgba(127,212,255,0.35); }
+  .rb-btns { display: flex; gap: 12px; margin-bottom: 20px; }
+  .rb-result { display: flex; gap: 16px; flex-wrap: wrap; min-height: 96px; }
+  .rb-side {
+    flex: 1; min-width: 140px;
+    border-radius: 12px;
+    padding: 22px 16px;
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    display: flex; flex-direction: column; justify-content: center; gap: 8px;
+    transition: transform .15s;
+  }
+  .rb-side .rb-label { font-size: 15px; letter-spacing: 4px; opacity: .85; }
+  .rb-side .rb-name { word-break: break-all; }
+  .rb-side.rb-red {
+    background: linear-gradient(135deg, rgba(180,30,40,0.55), rgba(120,10,20,0.5));
+    border: 1px solid rgba(255,90,90,0.6);
+    color: #ffd9d9;
+    box-shadow: 0 0 18px rgba(255,60,60,0.35);
+  }
+  .rb-side.rb-blue {
+    background: linear-gradient(135deg, rgba(30,80,180,0.55), rgba(10,40,120,0.5));
+    border: 1px solid rgba(90,160,255,0.6);
+    color: #d9ecff;
+    box-shadow: 0 0 18px rgba(60,140,255,0.35);
+  }
+  .rb-side.rb-shuffle { animation: rbPulse .5s infinite alternate; }
+  @keyframes rbPulse { from { transform: scale(1); } to { transform: scale(1.03); } }
+  .rb-side.rb-empty {
+    background: rgba(6,15,34,0.4);
+    border: 1px dashed var(--border);
+    color: #6b83a6;
+    box-shadow: none;
+    font-size: 18px;
+  }
+
   /* ===== 手机端文字排版优化（≤600px） ===== */
   @media (max-width: 600px) {
     /* 容器与面板收窄，减少手机留白 */
@@ -1000,6 +1060,8 @@
       padding: 16px 12px;
       margin-bottom: 20px;
     }
+    .rb-section { padding: 16px 12px; margin-bottom: 20px; }
+    .rb-side { font-size: 20px; padding: 16px 10px; }
 
     /* 头部文字 */
     .header { padding: 26px 10px 20px; }
@@ -1213,6 +1275,23 @@
       </div>
       <div class="status-msg" id="statusMsg"></div>
       <div class="groups-grid" id="groupsGrid"></div>
+    </div>
+
+    <!-- 红蓝分组（所有访客可用，纯本地随机，不同步云端） -->
+    <div class="rb-section" id="rbSection">
+      <div class="section-title">红蓝分组 · 两队随机分配</div>
+      <div class="rb-inputs">
+        <input class="rb-input" id="rbTeam1" placeholder="输入第一队队名" maxlength="20">
+        <input class="rb-input" id="rbTeam2" placeholder="输入第二队队名" maxlength="20">
+      </div>
+      <div class="rb-btns">
+        <button class="btn btn-primary" id="rbStartBtn">开始分组</button>
+        <button class="btn btn-secondary" id="rbClearBtn">清空</button>
+      </div>
+      <div class="rb-result" id="rbResult">
+        <div class="rb-side rb-empty">等待分组…</div>
+        <div class="rb-side rb-empty">等待分组…</div>
+      </div>
     </div>
 
     <!-- 赛程安排 -->
@@ -2195,6 +2274,94 @@
       </div>
     `).join('');
   }
+
+  // ============ 红蓝分组（纯本地随机，所有访客可用，不写入云端） ============
+  (function initRedBlueDraw() {
+    const t1Input = document.getElementById('rbTeam1');
+    const t2Input = document.getElementById('rbTeam2');
+    const startBtn = document.getElementById('rbStartBtn');
+    const clearBtn = document.getElementById('rbClearBtn');
+    const resultBox = document.getElementById('rbResult');
+    if (!t1Input || !t2Input || !startBtn || !clearBtn || !resultBox) return;
+
+    let rolling = false;
+    let rollTimer = null;
+
+    // 加密级随机取 0/1
+    function coinFlip() {
+      try {
+        const a = new Uint32Array(1);
+        crypto.getRandomValues(a);
+        return a[0] % 2;
+      } catch (e) {
+        return Math.random() < 0.5 ? 0 : 1;
+      }
+    }
+
+    // 渲染红蓝两个面板（textContent 写入，避免注入）
+    function render(redName, blueName, shuffling) {
+      resultBox.innerHTML = '';
+      [['红方', redName, 'rb-red'], ['蓝方', blueName, 'rb-blue']].forEach(([label, name, cls]) => {
+        const div = document.createElement('div');
+        div.className = 'rb-side ' + cls + (shuffling ? ' rb-shuffle' : '');
+        const l = document.createElement('div');
+        l.className = 'rb-label';
+        l.textContent = label;
+        const n = document.createElement('div');
+        n.className = 'rb-name';
+        n.textContent = name;
+        div.appendChild(l);
+        div.appendChild(n);
+        resultBox.appendChild(div);
+      });
+    }
+
+    function resetDisplay() {
+      resultBox.innerHTML = '<div class="rb-side rb-empty">等待分组…</div><div class="rb-side rb-empty">等待分组…</div>';
+    }
+
+    function start() {
+      if (rolling) return;
+      const a = t1Input.value.trim();
+      const b = t2Input.value.trim();
+      if (!a || !b) { alert('请输入两队的名字'); return; }
+      if (a === b) { alert('两队名字不能相同'); return; }
+      rolling = true;
+      startBtn.disabled = true;
+      const names = [a, b];
+      const begin = Date.now();
+      const DURATION = 2000;
+      (function tick() {
+        const swap = coinFlip();
+        render(names[swap], names[1 - swap], true);
+        if (Date.now() - begin < DURATION) {
+          rollTimer = setTimeout(tick, 120);
+        } else {
+          // 最终结果：完全随机定红蓝
+          const fin = coinFlip();
+          render(names[fin], names[1 - fin], false);
+          rolling = false;
+          startBtn.disabled = false;
+        }
+      })();
+    }
+
+    function clearAll() {
+      clearTimeout(rollTimer);
+      rolling = false;
+      startBtn.disabled = false;
+      t1Input.value = '';
+      t2Input.value = '';
+      resetDisplay();
+    }
+
+    startBtn.addEventListener('click', start);
+    clearBtn.addEventListener('click', clearAll);
+    [t1Input, t2Input].forEach(inp => inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') start();
+    }));
+  })();
+
 
   // ============ 淘汰赛对阵表自动衔接 ============
 
