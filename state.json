@@ -1,6 +1,6 @@
 {
   "initialized": true,
-  "savedAt": 1789139705902,
+  "savedAt": 1789140626143,
   "players": [
     "悠悠我心",
     "小新少爷",
@@ -433,7 +433,7 @@
         "id": "1-2",
         "p1": "A2",
         "p2": "A3",
-        "winner": null,
+        "winner": "A2",
         "s1": "",
         "s2": "",
         "stats": {}
@@ -1266,13 +1266,13 @@
         "pts": 2
       },
       "A2": {
-        "w": 1,
+        "w": 2,
         "l": 1,
-        "pts": 1
+        "pts": 2
       },
       "A3": {
         "w": 1,
-        "l": 1,
+        "l": 2,
         "pts": 1
       },
       "A4": {
@@ -1321,7 +1321,75 @@
       }
     }
   },
-  "knockout": {},
+  "knockout": {
+    "QF1": {
+      "t1": null,
+      "t2": null,
+      "winner": null,
+      "stats": {}
+    },
+    "QF2": {
+      "t1": null,
+      "t2": null,
+      "winner": null,
+      "stats": {}
+    },
+    "QF3": {
+      "t1": null,
+      "t2": null,
+      "winner": null,
+      "stats": {}
+    },
+    "QF4": {
+      "t1": null,
+      "t2": null,
+      "winner": null,
+      "stats": {}
+    },
+    "SF1": {
+      "t1": null,
+      "t2": null,
+      "winner": null,
+      "stats": {}
+    },
+    "SF2": {
+      "t1": null,
+      "t2": null,
+      "winner": null,
+      "stats": {}
+    },
+    "FINAL": {
+      "t1": null,
+      "t2": null,
+      "winner": null,
+      "stats": {}
+    },
+    "P56": {
+      "t1": null,
+      "t2": null,
+      "winner": null,
+      "stats": {}
+    },
+    "P78": {
+      "t1": null,
+      "t2": null,
+      "winner": null,
+      "stats": {}
+    },
+    "TF": {
+      "t1": null,
+      "t2": null,
+      "winner": null,
+      "stats": {}
+    },
+    "_initialized": true
+  },
   "groupStageComplete": false,
-  "wildcardTiebreak": null
+  "wildcardTiebreak": {
+    "teams": [
+      "A3",
+      "A4"
+    ],
+    "winner": null
+  }
 }
