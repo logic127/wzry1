@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -2805,9 +2805,13 @@
 
   async function onAdminFabClick() {
     if (isAdmin()) {
+      // 退出前强制把最新页面数据推送到云端，避免 400ms 防抖内未保存的编辑丢失
+      clearTimeout(saveTimer);
+      const ok = await saveState();
       ADMIN_KEY = '';
       sessionStorage.removeItem('wzry_admin_key');
       applyMode();
+      if (!ok) alert('退出前数据同步失败，请检查网络后重新登录管理员模式再试（本地修改仍保留在当前页面）');
       return;
     }
     if (USE_GITHUB) {
@@ -2909,20 +2913,23 @@
   }
 
   async function saveState() {
-    if (!isAdmin()) return;
+    if (!isAdmin()) return false;
     const payload = buildStatePayload();
     try {
       if (USE_GITHUB) {
         await saveToGithub(payload);
       } else {
-        await fetch('/api/save', {
+        const res = await fetch('/api/save', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY },
           body: JSON.stringify(payload)
         });
+        if (!res.ok) throw new Error('local save failed: ' + res.status);
       }
+      return true;
     } catch (e) {
       console.warn('保存失败', e);
+      return false;
     }
   }
 
