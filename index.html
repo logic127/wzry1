@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -451,31 +451,124 @@
     border: 1px solid rgba(127, 212, 255, 0.4);
   }
 
-  /* 外卡加赛 */
-  .wc-tiebreak-team {
-    padding: 8px 18px;
-    background: rgba(10, 22, 46, 0.7);
+  /* 外卡资格加赛 */
+  .playoff-section {
+    background: linear-gradient(135deg, rgba(60, 30, 80, 0.45), rgba(20, 10, 40, 0.65));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid #8a5cf6;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 30px rgba(60, 20, 100, 0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  .po-rules {
+    font-size: 12px;
+    color: #b9a6e6;
+    margin-bottom: 14px;
+    line-height: 1.7;
+  }
+  .po-rules strong { color: #d9c2ff; }
+  .po-config { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .po-select {
+    background: rgba(10, 22, 46, 0.8);
     border: 1px solid rgba(183, 155, 255, 0.45);
     border-radius: 6px;
     color: var(--text);
-    font-size: 14px;
+    font-size: 13px;
+    padding: 8px 10px;
+    font-family: inherit;
+    max-width: 260px;
+  }
+  .po-clear-btn {
+    background: rgba(120, 30, 40, 0.5);
+    border: 1px solid rgba(255, 110, 110, 0.5);
+    border-radius: 6px;
+    color: #ffb3b3;
+    font-size: 13px;
+    padding: 8px 14px;
     cursor: pointer;
-    user-select: none;
+    font-family: inherit;
     transition: all 0.2s;
   }
-  .wc-tiebreak-team:hover {
-    border-color: var(--violet);
-    background: rgba(183, 155, 255, 0.15);
-    transform: scale(1.05);
-    box-shadow: 0 0 12px rgba(183, 155, 255, 0.35);
+  .po-clear-btn:hover { background: rgba(160, 40, 55, 0.65); box-shadow: 0 0 10px rgba(255, 80, 80, 0.35); }
+  .po-tip { font-size: 12px; color: #9b8ac2; line-height: 1.8; margin-top: 10px; }
+  .po-matches { margin-bottom: 6px; }
+  .po-match {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 0;
+    border-bottom: 1px dotted rgba(183, 155, 255, 0.22);
+    font-size: 13px;
+    flex-wrap: wrap;
   }
-  .wc-tiebreak-team.win {
-    background: linear-gradient(135deg, rgba(183,155,255,0.35), rgba(245,215,142,0.25));
+  .po-match:last-child { border-bottom: none; }
+  .po-no { color: var(--text-muted); font-size: 11px; width: 24px; }
+  .po-match .p1, .po-match .p2 {
+    flex: 1;
+    min-width: 76px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    border: 1px solid rgba(183, 155, 255, 0.4);
+    background: rgba(10, 22, 46, 0.6);
+    color: var(--text);
+    user-select: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .po-match .p1:hover, .po-match .p2:hover {
+    background: rgba(183, 155, 255, 0.15);
+    border-color: var(--violet);
+  }
+  .po-match .p1.win, .po-match .p2.win {
+    background: linear-gradient(135deg, rgba(245,215,142,0.25), rgba(183,155,255,0.18));
     color: var(--gold-bright);
     font-weight: bold;
     border-color: var(--gold);
-    box-shadow: 0 0 14px rgba(245, 215, 142, 0.4);
+    box-shadow: 0 0 10px rgba(245, 215, 142, 0.3);
   }
+  .po-vs { color: var(--text-muted); font-size: 11px; width: 22px; text-align: center; }
+  .po-num, .po-dur {
+    background: rgba(6, 15, 34, 0.7);
+    border: 1px solid rgba(183, 155, 255, 0.4);
+    border-radius: 4px;
+    color: var(--text);
+    font-size: 13px;
+    padding: 5px 6px;
+    font-family: inherit;
+  }
+  .po-num { width: 58px; text-align: center; }
+  .po-dur { width: 84px; text-align: center; }
+  .po-num:focus, .po-dur:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 8px rgba(183,155,255,0.35); }
+  .po-sep { color: var(--text-muted); font-size: 12px; }
+  .po-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 13px;
+  }
+  .po-table th, .po-table td {
+    padding: 7px 8px;
+    text-align: center;
+    border-bottom: 1px solid rgba(183, 155, 255, 0.18);
+  }
+  .po-table th {
+    color: #c9a961;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(201, 169, 97, 0.4);
+    font-size: 12px;
+  }
+  .po-table tr.po-qualified td { color: var(--gold-bright); }
+  .po-table tr.po-qualified td:first-child::before { content: '★ '; color: var(--gold); }
+  body.readonly .po-config { display: none; }
+  body.readonly .po-match .p1, body.readonly .po-match .p2 { cursor: default; }
+  body.readonly .po-match .p1:hover, body.readonly .po-match .p2:hover { background: rgba(10, 22, 46, 0.6); border-color: rgba(183, 155, 255, 0.4); }
 
   /* 可编辑队名输入框（分组卡片头部） */
   .team-name-input {
@@ -1062,6 +1155,13 @@
     }
     .rb-section { padding: 16px 12px; margin-bottom: 20px; }
     .rb-side { font-size: 20px; padding: 16px 10px; }
+    .playoff-section { padding: 16px 12px; margin-bottom: 20px; }
+    .po-match { font-size: 12px; gap: 4px; }
+    .po-match .p1, .po-match .p2 { min-width: 60px; padding: 6px 4px; font-size: 12px; }
+    .po-num { width: 48px; }
+    .po-dur { width: 70px; }
+    .po-table { font-size: 11px; }
+    .po-table th, .po-table td { padding: 5px 3px; }
 
     /* 头部文字 */
     .header { padding: 26px 10px 20px; }
@@ -1212,12 +1312,10 @@
   body.readonly .btn-area { display: none; }
   body.readonly .match-team,
   body.readonly .match-row .p1,
-  body.readonly .match-row .p2,
-  body.readonly .wc-tiebreak-team { cursor: default; }
+  body.readonly .match-row .p2 { cursor: default; }
   body.readonly .match-team:hover { background: transparent; border-color: transparent; }
   body.readonly .match-row .p1:hover,
   body.readonly .match-row .p2:hover { background: rgba(10, 22, 46, 0.5); border-color: var(--border); transform: none; }
-  body.readonly .wc-tiebreak-team:hover { transform: none; box-shadow: none; }
   body.readonly .gs-tab { cursor: pointer; }
   </style>
   <!-- GitHub 静态托管配置（留空则回退到本地 server.py 模式） -->
@@ -1327,8 +1425,8 @@
         <div style="text-align:center; color:#888; font-size:12px; margin-top:10px; line-height:1.8;">
           <span style="color:#ffd700;">●</span> 大组第1（按积分取，共3队）　
           <span style="color:#c9a961;">●</span> 大组第2（按积分取，共3队）　
-          <span style="color:#6ba6ff;">●</span> 外卡（按<strong style="color:#6ba6ff;">胜率</strong>取，剩余前2）<br>
-          积分规则：胜=1分 · 负=0分　|　胜率 = 胜场 / 已赛场次<br>
+          <span style="color:#6ba6ff;">●</span> 外卡（剩余队伍<strong style="color:#6ba6ff;">加赛</strong>决出前2）<br>
+          积分规则：胜=1分 · 负=0分　|　外卡加赛同分先比净胜人头、再比获胜总时长<br>
           A/B/C三大组各取前2共6队 + 外卡2队 = <strong style="color:#ffd700;">8强</strong>
         </div>
       </div>
@@ -1357,7 +1455,8 @@
           <div class="stage-desc">
             采用 <strong>4-4-3</strong> 取位规则：<br>
             • A、B、C 三大组各取 <strong>前2名</strong> 共 <strong>6队</strong><br>
-            • 剩余选手中排名 <strong>前2名</strong>（外卡）<br>
+            • 剩余队伍通过 <strong>外卡资格加赛</strong> 决出 <strong>前2名</strong>（外卡）<br>
+            加赛排名：积分 → 净胜人头数 → 获胜场次总时长<br>
             合计 <strong>8支队伍</strong> 晋级淘汰赛。
           </div>
           <div class="stage-tag">每组前2</div>
@@ -1389,16 +1488,16 @@
       </div>
     </div>
 
+    <!-- 外卡资格加赛（管理员配置并列队伍，单循环决出2个外卡名额） -->
+    <div class="playoff-section" id="playoffSection">
+      <div class="section-title">外卡资格加赛 · 决出2个外卡名额</div>
+      <div class="po-rules">胜=1分 负=0分；积分相同比较<strong>净胜人头数</strong>（多者靠前）；仍相同比较<strong>获胜场次总时长</strong>（短者靠前）。无需四维录入。</div>
+      <div id="playoffBody"></div>
+    </div>
+
     <!-- 淘汰赛对阵表 -->
     <div class="bracket-section">
       <div class="section-title">淘汰赛对阵表 · 自动衔接小组赛8强</div>
-
-      <!-- 外卡加赛（仅在有并列时显示） -->
-      <div id="wildcardTiebreakSection" style="display:none; margin-bottom:16px; padding:14px; background:linear-gradient(135deg,rgba(60,30,80,0.5),rgba(30,10,40,0.7)); border:1px solid #8a5cf6; border-radius:6px;">
-        <div style="text-align:center; color:#c9a961; font-size:14px; letter-spacing:2px; margin-bottom:10px;">⚠ 外卡资格加赛（BO1）</div>
-        <div style="text-align:center; color:#888; font-size:11px; margin-bottom:10px;">以下队伍胜率与胜场相同，加赛决出外卡资格（无需四维录入）</div>
-        <div id="wildcardTiebreakBody"></div>
-      </div>
 
       <div class="bracket-empty" id="bracketEmpty" style="text-align:center; padding:30px; color:#888;">
         <div style="font-size:14px; letter-spacing:2px;">等待小组赛结束，8强自动填入对阵表...</div>
@@ -1559,8 +1658,9 @@
     knockout: {},
     // 小组赛是否已完成（全部15场录入胜负）
     groupStageComplete: false,
-    // 外卡加赛（若出现并列）
-    wildcardTiebreak: null
+    // 外卡资格加赛（管理员手动配置参赛队伍，单循环，录入胜负/总人头/时长）
+    // playoff = { teams: [slotKey...], matches: [{ id, p1, p2, winner, k1, k2, dur }] }
+    playoff: null
   };
 
   // 分组结构定义：A1-A4, B1-B4, C1-C3
@@ -2391,49 +2491,31 @@
       tierTop2[tier.key] = arr.slice(0, 2).map(x => x.name);
     });
 
-    // 外卡：剩余队伍按胜率取前2
-    function winRate(p) {
-      const total = p.w + p.l;
-      return total === 0 ? 0 : p.w / total;
-    }
-    const allTeams = [];
-    TIERS.forEach(tier => {
-      Object.entries(STATE.standings[tier.key] || {}).forEach(([name, v]) => {
-        allTeams.push({ name, tier: tier.key, ...v });
-      });
-    });
-    const qualified = new Set([
-      ...tierTop2.A || [], ...tierTop2.B || [], ...tierTop2.C || []
-    ]);
-    const wcCandidates = allTeams.filter(x => !qualified.has(x.name));
-    wcCandidates.sort((a, b) => winRate(b) - winRate(a) || b.w - a.w || a.name.localeCompare(b.name));
-
-    // 检测外卡第2名是否出现胜率+胜场并列
-    // 若有并列，需开BO1加赛（无四维录入），胜者获外卡2
-    let wc1 = wcCandidates[0]?.name || null;
-    let wc2 = wcCandidates[1]?.name || null;
-    // 检测并列：第2名之后是否有相同胜率+相同胜场
-    if (wcCandidates.length >= 3) {
-      const second = wcCandidates[1];
-      const tied = wcCandidates.slice(2).filter(x =>
-        winRate(x) === winRate(second) && x.w === second.w
-      );
-      if (tied.length > 0) {
-        // 有并列，触发加赛
-        STATE.wildcardTiebreak = {
-          teams: [second.name, ...tied.map(t => t.name)],
-          // winner 由用户在加赛UI标记
-          winner: STATE.wildcardTiebreak?.winner || null
-        };
-        // 若加赛已有胜者，使用之
-        if (STATE.wildcardTiebreak.winner) {
-          wc2 = STATE.wildcardTiebreak.winner;
-        }
-      } else {
-        STATE.wildcardTiebreak = null;
-      }
+    // 外卡：若管理员配置了"外卡资格加赛"，以外卡加赛排名取前2；
+    // 否则按剩余队伍胜率自动取前2
+    let wc1 = null, wc2 = null;
+    if (STATE.playoff && STATE.playoff.teams && STATE.playoff.teams.length >= 2) {
+      const rank = computePlayoffRanking();
+      wc1 = rank[0] ? rank[0].name : null;
+      wc2 = rank[1] ? rank[1].name : null;
     } else {
-      STATE.wildcardTiebreak = null;
+      function winRate(p) {
+        const total = p.w + p.l;
+        return total === 0 ? 0 : p.w / total;
+      }
+      const allTeams = [];
+      TIERS.forEach(tier => {
+        Object.entries(STATE.standings[tier.key] || {}).forEach(([name, v]) => {
+          allTeams.push({ name, tier: tier.key, ...v });
+        });
+      });
+      const qualified = new Set([
+        ...tierTop2.A || [], ...tierTop2.B || [], ...tierTop2.C || []
+      ]);
+      const wcCandidates = allTeams.filter(x => !qualified.has(x.name));
+      wcCandidates.sort((a, b) => winRate(b) - winRate(a) || b.w - a.w || a.name.localeCompare(b.name));
+      wc1 = wcCandidates[0]?.name || null;
+      wc2 = wcCandidates[1]?.name || null;
     }
 
     return {
@@ -2467,16 +2549,19 @@
 
   // 更新淘汰赛对阵表
   function renderKnockoutBracket() {
+    // 外卡资格加赛板块始终渲染（独立于小组赛是否结束，方便提前录入）
+    renderPlayoffSection();
+    updateBracketView();
+  }
+
+  function updateBracketView() {
     const status = checkGroupStageComplete();
     const emptyEl = document.getElementById('bracketEmpty');
     const bracketEl = document.getElementById('bracket');
-    const wcSection = document.getElementById('wildcardTiebreakSection');
-    const wcBody = document.getElementById('wildcardTiebreakBody');
 
     if (!status.complete) {
       emptyEl.style.display = 'block';
       bracketEl.style.display = 'none';
-      wcSection.style.display = 'none';
       emptyEl.innerHTML = `
         <div style="font-size:14px; letter-spacing:2px; color:#c9a961;">小组赛进行中... ${status.done}/${status.total} 场已录入</div>
         <div style="font-size:12px; margin-top:8px; color:#666;">完成全部 ${status.total} 场小组赛后自动生成8强对阵</div>
@@ -2488,35 +2573,8 @@
     emptyEl.style.display = 'none';
     bracketEl.style.display = 'flex';
 
-    // 先调用以触发 wildcardTiebreak 检测
     const seeds = getQualifiedTeams();
 
-    // 渲染外卡加赛
-    if (STATE.wildcardTiebreak && STATE.wildcardTiebreak.teams.length > 1) {
-      wcSection.style.display = 'block';
-      const wt = STATE.wildcardTiebreak;
-      wcBody.innerHTML = '';
-      const teamsGrid = document.createElement('div');
-      teamsGrid.style.cssText = 'display:flex; flex-wrap:wrap; gap:10px; justify-content:center;';
-      wt.teams.forEach((t, i) => {
-        const btn = document.createElement('div');
-        const isWin = wt.winner === t;
-        btn.className = 'wc-tiebreak-team' + (isWin ? ' win' : '');
-        btn.textContent = teamName(t);
-        btn.dataset.team = t;
-        btn.addEventListener('click', onPickWildcardTiebreakWinner);
-        teamsGrid.appendChild(btn);
-      });
-      wcBody.appendChild(teamsGrid);
-      const hint = document.createElement('div');
-      hint.style.cssText = 'text-align:center; margin-top:8px; font-size:12px;';
-      hint.innerHTML = wt.winner
-        ? `<span style="color:#ffd700;">✓ 加赛胜者：<strong>${teamName(wt.winner)}</strong>（获得外卡资格）</span>`
-        : '<span style="color:#888;">点击队伍名标记为加赛胜者</span>';
-      wcBody.appendChild(hint);
-    } else {
-      wcSection.style.display = 'none';
-    }
     // 初始化 knockout 状态（仅一次）
     if (!STATE.knockout._initialized) {
       ['QF1','QF2','QF3','QF4','SF1','SF2','FINAL','P56','P78','TF'].forEach(m => {
@@ -2525,9 +2583,8 @@
       STATE.knockout._initialized = true;
     }
 
-    // 若外卡加赛未决出，阻止后续对阵填充
-    if (STATE.wildcardTiebreak && !STATE.wildcardTiebreak.winner) {
-      // 显示对阵表但留空，等待加赛结果
+    // 若配置了外卡加赛但尚未打满全循环，阻止8强填充（等待外卡名额确定）
+    if (STATE.playoff && STATE.playoff.teams && STATE.playoff.teams.length >= 2 && !isPlayoffComplete()) {
       return;
     }
 
@@ -2911,16 +2968,221 @@
     scheduleSave();
   }
 
-  // 外卡加赛标记胜者
-  function onPickWildcardTiebreakWinner(e) {
-    if (!isAdmin()) return;
-    const team = e.currentTarget.dataset.team;
-    if (!STATE.wildcardTiebreak) return;
-    if (STATE.wildcardTiebreak.winner === team) {
-      STATE.wildcardTiebreak.winner = null;
-    } else {
-      STATE.wildcardTiebreak.winner = team;
+  // ============ 外卡资格加赛（管理员手动配置队伍，单循环，录入胜负/总人头/时长） ============
+  // 排名规则：积分(胜1负0) > 净胜人头数多 > 获胜场次总时长少 > 名称序
+
+  // 根据参赛队伍生成单循环对阵（保留已录入结果）
+  function rebuildPlayoffMatches() {
+    const teams = STATE.playoff.teams;
+    const old = {};
+    (STATE.playoff.matches || []).forEach(m => { old[m.id] = m; });
+    const matches = [];
+    for (let i = 0; i < teams.length; i++) {
+      for (let j = i + 1; j < teams.length; j++) {
+        const id = `P${i}-${j}`;
+        const prev = old[id];
+        matches.push(prev && prev.p1 === teams[i] && prev.p2 === teams[j]
+          ? prev
+          : { id, p1: teams[i], p2: teams[j], winner: null, k1: '', k2: '', dur: '' });
+      }
     }
+    STATE.playoff.matches = matches;
+  }
+
+  // 加赛是否已打满全循环（每场均有人头数与时长）
+  function isPlayoffComplete() {
+    const po = STATE.playoff;
+    if (!po || !po.matches || po.matches.length === 0) return false;
+    return po.matches.every(m => m.winner && m.k1 !== '' && m.k2 !== '' && m.dur !== '');
+  }
+
+  // 计算加赛排名：pts > 净胜人头 > 获胜场次总时长 > 名称
+  function computePlayoffRanking() {
+    const po = STATE.playoff;
+    const rows = {};
+    (po.teams || []).forEach(t => { rows[t] = { name: t, pts: 0, w: 0, l: 0, kf: 0, ka: 0, winDur: 0 }; });
+    (po.matches || []).forEach(m => {
+      const r1 = rows[m.p1], r2 = rows[m.p2];
+      if (!r1 || !r2) return;
+      const k1 = parseInt(m.k1, 10) || 0;
+      const k2 = parseInt(m.k2, 10) || 0;
+      const dur = parseFloat(m.dur) || 0;
+      r1.kf += k1; r1.ka += k2;
+      r2.kf += k2; r2.ka += k1;
+      if (m.winner === m.p1) { r1.pts++; r1.w++; r1.winDur += dur; r2.l++; }
+      else if (m.winner === m.p2) { r2.pts++; r2.w++; r2.winDur += dur; r1.l++; }
+    });
+    const arr = Object.values(rows);
+    arr.sort((a, b) =>
+      b.pts - a.pts ||
+      (b.kf - b.ka) - (a.kf - a.ka) ||
+      a.winDur - b.winDur ||
+      a.name.localeCompare(b.name)
+    );
+    return arr;
+  }
+
+  // 渲染外卡加赛板块（队伍配置 + 对阵录入 + 积分榜）
+  function renderPlayoffSection() {
+    const sec = document.getElementById('playoffSection');
+    const body = document.getElementById('playoffBody');
+    if (!sec || !body) return;
+    const admin = isAdmin();
+    const po = STATE.playoff;
+    // 记住当前聚焦的输入框，重渲染后恢复焦点
+    const active = document.activeElement;
+    const focusKey = (active && active.dataset && active.dataset.id && active.dataset.field)
+      ? `${active.dataset.id}|${active.dataset.field}|${active.selectionStart}` : null;
+    body.innerHTML = '';
+
+    // ---- 参赛队伍配置行（管理员可见） ----
+    if (admin) {
+      const cfg = document.createElement('div');
+      cfg.className = 'po-config';
+      const sel = document.createElement('select');
+      sel.className = 'po-select';
+      const used = new Set(po ? po.teams : []);
+      sel.innerHTML = '<option value="">+ 添加参赛队伍…</option>' + GROUP_STRUCTURE
+        .filter(g => !used.has(g.name))
+        .map(g => `<option value="${g.name}">${g.name}（${teamName(g.name)}）</option>`).join('');
+      sel.addEventListener('change', e => {
+        const v = e.target.value;
+        if (!v) return;
+        if (!STATE.playoff) STATE.playoff = { teams: [], matches: [] };
+        STATE.playoff.teams.push(v);
+        rebuildPlayoffMatches();
+        renderKnockoutBracket();
+        scheduleSave();
+      });
+      cfg.appendChild(sel);
+      const rm = document.createElement('select');
+      rm.className = 'po-select';
+      rm.innerHTML = '<option value="">− 移除参赛队伍…</option>' +
+        ((po && po.teams) || []).map(t => `<option value="${t}">${t}（${teamName(t)}）</option>`).join('');
+      rm.disabled = !po || !po.teams.length;
+      rm.addEventListener('change', e => {
+        const v = e.target.value;
+        if (!v || !STATE.playoff) return;
+        STATE.playoff.teams = STATE.playoff.teams.filter(t => t !== v);
+        if (STATE.playoff.teams.length < 2) { STATE.playoff = null; }
+        else rebuildPlayoffMatches();
+        renderKnockoutBracket();
+        scheduleSave();
+      });
+      cfg.appendChild(rm);
+      const clr = document.createElement('button');
+      clr.className = 'po-clear-btn';
+      clr.textContent = '清空加赛';
+      clr.addEventListener('click', () => {
+        if (!STATE.playoff) return;
+        if (!confirm('确定清空外卡加赛的全部配置与录入数据？')) return;
+        STATE.playoff = null;
+        renderKnockoutBracket();
+        scheduleSave();
+      });
+      cfg.appendChild(clr);
+      body.appendChild(cfg);
+    }
+
+    if (!po || !po.teams || po.teams.length < 2) {
+      const tip = document.createElement('div');
+      tip.className = 'po-tip';
+      tip.textContent = admin
+        ? '未启用：从上方下拉框选择并列队伍加入加赛（≥2队自动生成单循环赛程）'
+        : '管理员未启用外卡加赛';
+      body.appendChild(tip);
+      return;
+    }
+
+    // ---- 对阵录入行 ----
+    const list = document.createElement('div');
+    list.className = 'po-matches';
+    po.matches.forEach((m, i) => {
+      const row = document.createElement('div');
+      row.className = 'po-match';
+      row.innerHTML = `
+        <span class="po-no">#${i + 1}</span>
+        <div class="p1 ${m.winner === m.p1 ? 'win' : ''}" data-id="${m.id}" data-side="p1">${teamName(m.p1)}</div>
+        <span class="po-vs">VS</span>
+        <div class="p2 ${m.winner === m.p2 ? 'win' : ''}" data-id="${m.id}" data-side="p2">${teamName(m.p2)}</div>
+        <input class="po-num" type="number" min="0" max="99" placeholder="人头" value="${m.k1}" data-id="${m.id}" data-field="k1">
+        <span class="po-sep">:</span>
+        <input class="po-num" type="number" min="0" max="99" placeholder="人头" value="${m.k2}" data-id="${m.id}" data-field="k2">
+        <input class="po-dur" type="number" min="0" step="0.1" placeholder="时长(分)" value="${m.dur}" data-id="${m.id}" data-field="dur">
+      `;
+      list.appendChild(row);
+      if (!admin) {
+        row.querySelectorAll('input').forEach(inp => { inp.disabled = true; });
+      } else {
+        row.querySelectorAll('.p1, .p2').forEach(el => el.addEventListener('click', onPickPlayoffWinner));
+        row.querySelectorAll('input').forEach(el => el.addEventListener('input', onPlayoffInput));
+      }
+    });
+    body.appendChild(list);
+
+    // ---- 积分榜 ----
+    const rank = computePlayoffRanking();
+    const table = document.createElement('table');
+    table.className = 'po-table';
+    table.innerHTML = `
+      <thead><tr>
+        <th>名次</th><th>队伍</th><th>积分</th><th>胜/负</th><th>总人头</th><th>净胜人头</th><th>获胜总时长</th><th>资格</th>
+      </tr></thead>
+      <tbody>
+        ${rank.map((r, i) => `
+          <tr class="${i < 2 ? 'po-qualified' : ''}">
+            <td>${i + 1}</td>
+            <td>${teamName(r.name)}</td>
+            <td>${r.pts}</td>
+            <td>${r.w}/${r.l}</td>
+            <td>${r.kf}</td>
+            <td>${r.kf - r.ka > 0 ? '+' : ''}${r.kf - r.ka}</td>
+            <td>${r.winDur ? r.winDur + '′' : '—'}</td>
+            <td>${i < 2 ? (i === 0 ? '外卡1' : '外卡2') : '—'}</td>
+          </tr>`).join('')}
+      </tbody>`;
+    body.appendChild(table);
+
+    const note = document.createElement('div');
+    note.className = 'po-tip';
+    note.innerHTML = '排名规则：积分（胜1负0）→ 净胜人头数 → 获胜场次总时长（短者优先）。前2名获得外卡资格。' +
+      (isPlayoffComplete()
+        ? `<span style="color:#ffd700;"> ✓ 加赛完成：外卡1=${teamName(rank[0].name)}，外卡2=${teamName(rank[1].name)}</span>`
+        : '<span style="color:#888;"> 加赛未打满，8强暂不填充外卡对阵。</span>');
+    body.appendChild(note);
+
+    // 恢复焦点，保证连续录入体验
+    if (focusKey) {
+      const [fid, ffield, fpos] = focusKey.split('|');
+      const el = body.querySelector(`input[data-id="${fid}"][data-field="${ffield}"]`);
+      if (el) {
+        el.focus();
+        const p = parseInt(fpos, 10);
+        if (!isNaN(p) && el.setSelectionRange) { try { el.setSelectionRange(p, p); } catch (e) {} }
+      }
+    }
+  }
+
+  // 点击队伍名标记加赛胜者（再点自己取消）
+  function onPickPlayoffWinner(e) {
+    if (!isAdmin() || !STATE.playoff) return;
+    const { id, side } = e.currentTarget.dataset;
+    const m = STATE.playoff.matches.find(x => x.id === id);
+    if (!m) return;
+    const team = side === 'p1' ? m.p1 : m.p2;
+    m.winner = m.winner === team ? null : team;
+    renderKnockoutBracket();
+    scheduleSave();
+  }
+
+  // 加赛数值录入（人头数/时长）
+  function onPlayoffInput(e) {
+    if (!isAdmin() || !STATE.playoff) return;
+    const { id, field } = e.currentTarget.dataset;
+    const m = STATE.playoff.matches.find(x => x.id === id);
+    if (!m) return;
+    m[field] = e.currentTarget.value.trim();
+    // 数值变化会影响排名与外卡名额，实时刷新对阵表
     renderKnockoutBracket();
     scheduleSave();
   }
@@ -2958,6 +3220,8 @@
       fab.textContent = '🔓 管理员模式 · 点击退出';
       fab.classList.add('logged');
       banner.style.display = 'none';
+      // 登录管理员后重绘加赛板块，显示队伍配置与录入控件
+      renderPlayoffSection();
     } else {
       document.body.classList.add('readonly');
       fab.textContent = '🔒 管理员登录';
@@ -2967,6 +3231,8 @@
       if (STATE.groups && Object.keys(STATE.groups).length) {
         renderGroupsStatic(STATE.groups);
       }
+      // 退出后重绘加赛板块，隐藏配置与录入控件
+      renderPlayoffSection();
     }
   }
 
@@ -3053,7 +3319,7 @@
       standings: STATE.standings,
       knockout: STATE.knockout,
       groupStageComplete: STATE.groupStageComplete,
-      wildcardTiebreak: STATE.wildcardTiebreak
+      playoff: STATE.playoff
     };
   }
 
@@ -3211,7 +3477,12 @@
     STATE.standings = data.standings || {};
     STATE.knockout = data.knockout || {};
     STATE.groupStageComplete = !!data.groupStageComplete;
-    STATE.wildcardTiebreak = data.wildcardTiebreak || null;
+    STATE.playoff = data.playoff || null;
+    // 兼容旧数据：若存在已废弃的 wildcardTiebreak 且尚未配置加赛，迁移其队伍列表（丢弃旧 winner）
+    if (!STATE.playoff && data.wildcardTiebreak && data.wildcardTiebreak.teams && data.wildcardTiebreak.teams.length >= 2) {
+      STATE.playoff = { teams: data.wildcardTiebreak.teams.slice(), matches: [] };
+      rebuildPlayoffMatches();
+    }
 
     if (STATE.groups && Object.keys(STATE.groups).length) {
       renderGroupsStatic(STATE.groups);
