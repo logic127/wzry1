@@ -1,6 +1,6 @@
 {
   "initialized": true,
-  "savedAt": 1789282451090,
+  "savedAt": 1789282473275,
   "players": [
     "悠悠我心",
     "小新少爷",
@@ -1454,7 +1454,9 @@
     {
       "id": "PO_B",
       "purpose": "B",
-      "teams": [],
+      "teams": [
+        "B1"
+      ],
       "matches": []
     }
   ]
