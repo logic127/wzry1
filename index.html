@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -2582,10 +2582,23 @@
       return;
     }
 
+    const seeds = getQualifiedTeams();
+
+    // 若存在已配置（≥2队）但未打满的加赛：席位/外卡未定，不填充淘汰赛赛程
+    const pendingPo = (STATE.playoffs || []).find(p => p.teams && p.teams.length >= 2 && !isPlayoffComplete(p));
+    if (pendingPo) {
+      bracketEl.style.display = 'none';
+      emptyEl.style.display = 'block';
+      const meta = PLAYOFF_META[pendingPo.purpose] || { title: '加赛' };
+      emptyEl.innerHTML = `
+        <div style="font-size:14px; letter-spacing:2px; color:#c9a961;">「${meta.title}」进行中... ${pendingPo.matches.filter(m => m.winner).length}/${pendingPo.matches.length} 场已录入</div>
+        <div style="font-size:12px; margin-top:8px; color:#666;">加赛结果未填完，晋级席位与外卡名额尚未确定，淘汰赛赛程暂不填充</div>
+        <div style="font-size:12px; margin-top:6px; color:#666;">全部加赛打满后将自动按最终种子生成8强对阵</div>
+      `;
+      return;
+    }
     emptyEl.style.display = 'none';
     bracketEl.style.display = 'flex';
-
-    const seeds = getQualifiedTeams();
 
     // 初始化 knockout 状态（仅一次）
     if (!STATE.knockout._initialized) {
@@ -2593,12 +2606,6 @@
         STATE.knockout[m] = { t1: null, t2: null, winner: null, stats: {} };
       });
       STATE.knockout._initialized = true;
-    }
-
-    // 若存在已配置（≥2队）但未打满的加赛，阻止8强填充（等待席位/外卡确定）
-    const pendingPo = (STATE.playoffs || []).find(p => p.teams && p.teams.length >= 2 && !isPlayoffComplete(p));
-    if (pendingPo) {
-      return;
     }
 
     // 填充QF对阵（来自小组赛结果）
