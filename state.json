@@ -1,6 +1,6 @@
 {
   "initialized": true,
-  "savedAt": 1789282440979,
+  "savedAt": 1789282451090,
   "players": [
     "悠悠我心",
     "小新少爷",
@@ -1388,26 +1388,26 @@
   },
   "knockout": {
     "QF1": {
-      "t1": null,
-      "t2": null,
+      "t1": "A1",
+      "t2": "A3",
       "winner": null,
       "stats": {}
     },
     "QF2": {
-      "t1": null,
-      "t2": null,
+      "t1": "B1",
+      "t2": "C1",
       "winner": null,
       "stats": {}
     },
     "QF3": {
-      "t1": null,
-      "t2": null,
+      "t1": "C3",
+      "t2": "B2",
       "winner": null,
       "stats": {}
     },
     "QF4": {
-      "t1": null,
-      "t2": null,
+      "t1": "A2",
+      "t2": "B3",
       "winner": null,
       "stats": {}
     },
@@ -1451,44 +1451,6 @@
   },
   "groupStageComplete": false,
   "playoffs": [
-    {
-      "id": "PO_WC",
-      "purpose": "WC",
-      "teams": [
-        "A3",
-        "A4",
-        "C1"
-      ],
-      "matches": [
-        {
-          "id": "A3vsA4",
-          "p1": "A3",
-          "p2": "A4",
-          "winner": null,
-          "k1": "",
-          "k2": "",
-          "dur": ""
-        },
-        {
-          "id": "A3vsC1",
-          "p1": "A3",
-          "p2": "C1",
-          "winner": null,
-          "k1": "",
-          "k2": "",
-          "dur": ""
-        },
-        {
-          "id": "A4vsC1",
-          "p1": "A4",
-          "p2": "C1",
-          "winner": null,
-          "k1": "",
-          "k2": "",
-          "dur": ""
-        }
-      ]
-    },
     {
       "id": "PO_B",
       "purpose": "B",
