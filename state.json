@@ -1,6 +1,6 @@
 {
   "initialized": true,
-  "savedAt": 1789399755054,
+  "savedAt": 1789399763136,
   "players": [
     "悠悠我心",
     "小新少爷",
@@ -1476,7 +1476,7 @@
           "winner": "B3",
           "k1": "11",
           "k2": "20",
-          "dur": ""
+          "dur": "4"
         },
         {
           "id": "B2vsB3",
@@ -1494,13 +1494,32 @@
       "purpose": "WC",
       "teams": [
         "A3",
-        "A4"
+        "A4",
+        "B2"
       ],
       "matches": [
         {
           "id": "A3vsA4",
           "p1": "A3",
           "p2": "A4",
+          "winner": null,
+          "k1": "",
+          "k2": "",
+          "dur": ""
+        },
+        {
+          "id": "A3vsB2",
+          "p1": "A3",
+          "p2": "B2",
+          "winner": null,
+          "k1": "",
+          "k2": "",
+          "dur": ""
+        },
+        {
+          "id": "A4vsB2",
+          "p1": "A4",
+          "p2": "B2",
           "winner": null,
           "k1": "",
           "k2": "",
