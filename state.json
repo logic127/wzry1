@@ -1,6 +1,6 @@
 {
   "initialized": true,
-  "savedAt": 1789575748119,
+  "savedAt": 1789575814353,
   "players": [
     "悠悠我心",
     "小新少爷",
@@ -1538,7 +1538,7 @@
     "QF4": {
       "t1": "A2",
       "t2": "A4",
-      "winner": null,
+      "winner": "A4",
       "stats": {}
     },
     "SF1": {
@@ -1549,7 +1549,7 @@
     },
     "SF2": {
       "t1": "B1",
-      "t2": null,
+      "t2": "A4",
       "winner": null,
       "stats": {}
     },
@@ -1567,7 +1567,7 @@
     },
     "P78": {
       "t1": "C3",
-      "t2": null,
+      "t2": "A2",
       "winner": null,
       "stats": {}
     },
