@@ -1,6 +1,6 @@
 {
   "initialized": true,
-  "savedAt": 1789614372053,
+  "savedAt": 1789614373415,
   "players": [
     "悠悠我心",
     "小新少爷",
@@ -1698,7 +1698,7 @@
     "P78": {
       "t1": "C3",
       "t2": "A2",
-      "winner": null,
+      "winner": "C3",
       "stats": {}
     },
     "TF": {
