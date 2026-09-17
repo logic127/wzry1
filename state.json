@@ -1,6 +1,6 @@
 {
   "initialized": true,
-  "savedAt": 1789614387782,
+  "savedAt": 1789616577715,
   "players": [
     "悠悠我心",
     "小新少爷",
@@ -1690,14 +1690,14 @@
       "stats": {}
     },
     "P56": {
-      "t1": "A3",
-      "t2": "C1",
+      "t1": null,
+      "t2": "A2",
       "winner": null,
       "stats": {}
     },
     "P78": {
-      "t1": "C3",
-      "t2": "A2",
+      "t1": null,
+      "t2": "C3",
       "winner": null,
       "stats": {}
     },
@@ -1707,7 +1707,19 @@
       "winner": null,
       "stats": {}
     },
-    "_initialized": true
+    "_initialized": true,
+    "PLA": {
+      "t1": "A3",
+      "t2": "C1",
+      "winner": null,
+      "stats": {}
+    },
+    "PLB": {
+      "t1": "C3",
+      "t2": "A2",
+      "winner": "A2",
+      "stats": {}
+    }
   },
   "groupStageComplete": false,
   "playoffs": [
