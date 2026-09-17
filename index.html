@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -1481,8 +1481,7 @@
             • <strong>半决赛</strong>（BO1）<br>
             胜者晋级决赛，败者进入排位赛：<br>
             • <strong>3-4名争夺</strong>（BO1）<br>
-            • <strong>5-6名争夺</strong>（BO1）<br>
-            • <strong>7-8名争夺</strong>（BO1）<br>
+            • <strong>5-8名排位</strong>：首轮 QF1/QF2败者、QF3/QF4败者 各打一场（BO1），两场胜者争 <strong>5-6名</strong>，两场败者争 <strong>7-8名</strong><br>
             排位赛同样需录入四维数据。
           </div>
           <div class="stage-tag">BO1</div>
@@ -1583,15 +1582,25 @@
         </div>
         <div class="bracket-round">
           <div class="round-title">5-8名排位 (BO1)</div>
-          <div class="match" id="match-P56"><span class="match-tag">5-6</span>
-            <div class="match-team" data-match="P56" data-side="t1"><span class="mt-name">—</span><span class="mt-seed">QF1败者</span></div>
+          <div class="match" id="match-PLA"><span class="match-tag">5-8A</span>
+            <div class="match-team" data-match="PLA" data-side="t1"><span class="mt-name">—</span><span class="mt-seed">QF1败者</span></div>
             <div class="match-vs">VS</div>
-            <div class="match-team" data-match="P56" data-side="t2"><span class="mt-name">—</span><span class="mt-seed">QF2败者</span></div>
+            <div class="match-team" data-match="PLA" data-side="t2"><span class="mt-name">—</span><span class="mt-seed">QF2败者</span></div>
+          </div>
+          <div class="match" id="match-PLB"><span class="match-tag">5-8B</span>
+            <div class="match-team" data-match="PLB" data-side="t1"><span class="mt-name">—</span><span class="mt-seed">QF3败者</span></div>
+            <div class="match-vs">VS</div>
+            <div class="match-team" data-match="PLB" data-side="t2"><span class="mt-name">—</span><span class="mt-seed">QF4败者</span></div>
+          </div>
+          <div class="match" id="match-P56"><span class="match-tag">5-6</span>
+            <div class="match-team" data-match="P56" data-side="t1"><span class="mt-name">—</span><span class="mt-seed">5-8A胜者</span></div>
+            <div class="match-vs">VS</div>
+            <div class="match-team" data-match="P56" data-side="t2"><span class="mt-name">—</span><span class="mt-seed">5-8B胜者</span></div>
           </div>
           <div class="match" id="match-P78"><span class="match-tag">7-8</span>
-            <div class="match-team" data-match="P78" data-side="t1"><span class="mt-name">—</span><span class="mt-seed">QF3败者</span></div>
+            <div class="match-team" data-match="P78" data-side="t1"><span class="mt-name">—</span><span class="mt-seed">5-8A败者</span></div>
             <div class="match-vs">VS</div>
-            <div class="match-team" data-match="P78" data-side="t2"><span class="mt-name">—</span><span class="mt-seed">QF4败者</span></div>
+            <div class="match-team" data-match="P78" data-side="t2"><span class="mt-name">—</span><span class="mt-seed">5-8B败者</span></div>
           </div>
         </div>
       </div>
@@ -2563,7 +2572,9 @@
     'SF1W': 'SF1胜者', 'SF2W': 'SF2胜者',
     'SF1L': 'SF1败者', 'SF2L': 'SF2败者',
     'QF1L': 'QF1败者', 'QF2L': 'QF2败者',
-    'QF3L': 'QF3败者', 'QF4L': 'QF4败者'
+    'QF3L': 'QF3败者', 'QF4L': 'QF4败者',
+    'PLAW': '5-8A胜者', 'PLBW': '5-8B胜者',
+    'PLAL': '5-8A败者', 'PLBL': '5-8B败者'
   };
 
   // 更新淘汰赛对阵表
@@ -2609,11 +2620,15 @@
 
     // 初始化 knockout 状态（仅一次）
     if (!STATE.knockout._initialized) {
-      ['QF1','QF2','QF3','QF4','SF1','SF2','FINAL','P56','P78','TF'].forEach(m => {
+      ['QF1','QF2','QF3','QF4','SF1','SF2','FINAL','PLA','PLB','P56','P78','TF'].forEach(m => {
         STATE.knockout[m] = { t1: null, t2: null, winner: null, stats: {} };
       });
       STATE.knockout._initialized = true;
     }
+    // 兼容旧数据：补齐 5-8 名首轮（PLA/PLB）
+    ['PLA','PLB'].forEach(m => {
+      if (!STATE.knockout[m]) STATE.knockout[m] = { t1: null, t2: null, winner: null, stats: {} };
+    });
 
     // 填充QF对阵（来自小组赛结果）
     ['QF1','QF2','QF3','QF4'].forEach(mId => {
@@ -2663,20 +2678,23 @@
       }
     }
 
-    // 5-6名：QF1败者 vs QF2败者
-    const qf1Loser = STATE.knockout.QF1.t1 && STATE.knockout.QF1.t2 && STATE.knockout.QF1.winner
-      ? (STATE.knockout.QF1.winner === STATE.knockout.QF1.t1 ? STATE.knockout.QF1.t2 : STATE.knockout.QF1.t1) : null;
-    const qf2Loser = STATE.knockout.QF2.t1 && STATE.knockout.QF2.t2 && STATE.knockout.QF2.winner
-      ? (STATE.knockout.QF2.winner === STATE.knockout.QF2.t1 ? STATE.knockout.QF2.t2 : STATE.knockout.QF2.t1) : null;
-    const qf3Loser = STATE.knockout.QF3.t1 && STATE.knockout.QF3.t2 && STATE.knockout.QF3.winner
-      ? (STATE.knockout.QF3.winner === STATE.knockout.QF3.t1 ? STATE.knockout.QF3.t2 : STATE.knockout.QF3.t1) : null;
-    const qf4Loser = STATE.knockout.QF4.t1 && STATE.knockout.QF4.t2 && STATE.knockout.QF4.winner
-      ? (STATE.knockout.QF4.winner === STATE.knockout.QF4.t1 ? STATE.knockout.QF4.t2 : STATE.knockout.QF4.t1) : null;
-    STATE.knockout.P56.t1 = qf1Loser;
-    STATE.knockout.P56.t2 = qf2Loser;
-    STATE.knockout.P78.t1 = qf3Loser;
-    STATE.knockout.P78.t2 = qf4Loser;
-    ['P56','P78'].forEach(mId => {
+    // 5-8名排位（公平赛制）：
+    // 首轮 PLA: QF1败者 vs QF2败者；PLB: QF3败者 vs QF4败者
+    // 5-6名争夺 P56: PLA胜者 vs PLB胜者；7-8名争夺 P78: PLA败者 vs PLB败者
+    const loserOf = mId => {
+      const k = STATE.knockout[mId];
+      return k.t1 && k.t2 && k.winner
+        ? (k.winner === k.t1 ? k.t2 : k.t1) : null;
+    };
+    STATE.knockout.PLA.t1 = loserOf('QF1');
+    STATE.knockout.PLA.t2 = loserOf('QF2');
+    STATE.knockout.PLB.t1 = loserOf('QF3');
+    STATE.knockout.PLB.t2 = loserOf('QF4');
+    STATE.knockout.P56.t1 = STATE.knockout.PLA.winner;
+    STATE.knockout.P56.t2 = STATE.knockout.PLB.winner;
+    STATE.knockout.P78.t1 = loserOf('PLA');
+    STATE.knockout.P78.t2 = loserOf('PLB');
+    ['PLA','PLB','P56','P78'].forEach(mId => {
       const k = STATE.knockout[mId];
       if (k.winner && k.winner !== k.t1 && k.winner !== k.t2) {
         k.winner = null; k.stats = {};
@@ -2688,7 +2706,7 @@
       const k = STATE.knockout[mId];
       const matchEl = document.getElementById(`match-${mId}`);
       if (!matchEl) return;
-      const tagText = mId === 'TF' ? '3RD' : (mId === 'FINAL' ? 'FINAL' : (mId === 'P56' ? '5-6' : (mId === 'P78' ? '7-8' : mId)));
+      const tagText = mId === 'TF' ? '3RD' : (mId === 'FINAL' ? 'FINAL' : (mId === 'P56' ? '5-6' : (mId === 'P78' ? '7-8' : (mId === 'PLA' ? '5-8A' : (mId === 'PLB' ? '5-8B' : mId)))));
       // 重建对阵内容（保留外层match与按钮）
       const hasStatsBtn = matchEl.querySelector('.expand-btn');
       matchEl.innerHTML = `<span class="match-tag">${tagText}</span>
@@ -2717,8 +2735,10 @@
     renderMatch('SF2', 'QF3W', 'QF4W');
     renderMatch('FINAL', 'SF1W', 'SF2W');
     renderMatch('TF', 'SF1L', 'SF2L');
-    renderMatch('P56', 'QF1L', 'QF2L');
-    renderMatch('P78', 'QF3L', 'QF4L');
+    renderMatch('PLA', 'QF1L', 'QF2L');
+    renderMatch('PLB', 'QF3L', 'QF4L');
+    renderMatch('P56', 'PLAW', 'PLBW');
+    renderMatch('P78', 'PLAL', 'PLBL');
 
     // 显示冠军
     const champion = STATE.knockout.FINAL.winner;
@@ -2779,7 +2799,7 @@
     const content = document.getElementById('kstatsContent');
     const members1 = getTeamMembers(k.t1);
     const members2 = getTeamMembers(k.t2);
-    const tagText = mId === 'TF' ? '3-4名争夺' : (mId === 'FINAL' ? '总决赛' : (mId === 'P56' ? '5-6名争夺' : (mId === 'P78' ? '7-8名争夺' : mId)));
+    const tagText = mId === 'TF' ? '3-4名争夺' : (mId === 'FINAL' ? '总决赛' : (mId === 'P56' ? '5-6名争夺' : (mId === 'P78' ? '7-8名争夺' : (mId === 'PLA' ? '5-8名排位赛A' : (mId === 'PLB' ? '5-8名排位赛B' : mId)))));
     title.textContent = `${tagText} · 四维录入（${teamName(k.t1)} VS ${teamName(k.t2)}）`;
     content.innerHTML = `
       <div class="stats-grid">
