@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -1479,7 +1479,11 @@
             8强单败淘汰：<br>
             • <strong>八强赛</strong>（BO1）<br>
             • <strong>半决赛</strong>（BO1）<br>
-            胜者晋级决赛，败者淘汰。
+            胜者晋级决赛，败者进入排位赛：<br>
+            • <strong>3-4名争夺</strong>（BO1）<br>
+            • <strong>5-6名争夺</strong>（BO1）<br>
+            • <strong>7-8名争夺</strong>（BO1）<br>
+            排位赛同样需录入四维数据。
           </div>
           <div class="stage-tag">BO1</div>
           <div class="stage-tag">单败淘汰</div>
@@ -2556,7 +2560,10 @@
     WC1: '外卡1', WC2: '外卡2',
     'QF1W': 'QF1胜者', 'QF2W': 'QF2胜者',
     'QF3W': 'QF3胜者', 'QF4W': 'QF4胜者',
-    'SF1W': 'SF1胜者', 'SF2W': 'SF2胜者'
+    'SF1W': 'SF1胜者', 'SF2W': 'SF2胜者',
+    'SF1L': 'SF1败者', 'SF2L': 'SF2败者',
+    'QF1L': 'QF1败者', 'QF2L': 'QF2败者',
+    'QF3L': 'QF3败者', 'QF4L': 'QF4败者'
   };
 
   // 更新淘汰赛对阵表
@@ -2681,7 +2688,7 @@
       const k = STATE.knockout[mId];
       const matchEl = document.getElementById(`match-${mId}`);
       if (!matchEl) return;
-      const tagText = mId === 'TF' ? '3RD' : (mId === 'FINAL' ? 'FINAL' : mId);
+      const tagText = mId === 'TF' ? '3RD' : (mId === 'FINAL' ? 'FINAL' : (mId === 'P56' ? '5-6' : (mId === 'P78' ? '7-8' : mId)));
       // 重建对阵内容（保留外层match与按钮）
       const hasStatsBtn = matchEl.querySelector('.expand-btn');
       matchEl.innerHTML = `<span class="match-tag">${tagText}</span>
@@ -2712,11 +2719,6 @@
     renderMatch('TF', 'SF1L', 'SF2L');
     renderMatch('P56', 'QF1L', 'QF2L');
     renderMatch('P78', 'QF3L', 'QF4L');
-
-    // SEED_LABEL 补充
-    SEED_LABEL.SF1L = 'SF1败者'; SEED_LABEL.SF2L = 'SF2败者';
-    SEED_LABEL.QF1L = 'QF1败者'; SEED_LABEL.QF2L = 'QF2败者';
-    SEED_LABEL.QF3L = 'QF3败者'; SEED_LABEL.QF4L = 'QF4败者';
 
     // 显示冠军
     const champion = STATE.knockout.FINAL.winner;
@@ -2777,7 +2779,7 @@
     const content = document.getElementById('kstatsContent');
     const members1 = getTeamMembers(k.t1);
     const members2 = getTeamMembers(k.t2);
-    const tagText = mId === 'TF' ? '3-4名争夺' : (mId === 'FINAL' ? '总决赛' : mId);
+    const tagText = mId === 'TF' ? '3-4名争夺' : (mId === 'FINAL' ? '总决赛' : (mId === 'P56' ? '5-6名争夺' : (mId === 'P78' ? '7-8名争夺' : mId)));
     title.textContent = `${tagText} · 四维录入（${teamName(k.t1)} VS ${teamName(k.t2)}）`;
     content.innerHTML = `
       <div class="stats-grid">
