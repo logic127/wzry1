@@ -1,6 +1,6 @@
 {
   "initialized": true,
-  "savedAt": 1789747090400,
+  "savedAt": 1789747102204,
   "players": [
     "悠悠我心",
     "小新少爷",
@@ -2054,7 +2054,7 @@
     "FINAL2": {
       "t1": "B3",
       "t2": "B1",
-      "winner": null,
+      "winner": "B1",
       "stats": {}
     },
     "FINAL3": {
