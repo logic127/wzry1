@@ -1,6 +1,6 @@
 {
   "initialized": true,
-  "savedAt": 1789747400712,
+  "savedAt": 1789747556203,
   "players": [
     "悠悠我心",
     "小新少爷",
@@ -2126,7 +2126,16 @@
       "t1": "B3",
       "t2": "B1",
       "winner": "B1",
-      "stats": {}
+      "stats": {
+        "B3": {
+          "绵绵绵喵喵": {
+            "rating": "5.",
+            "k": "",
+            "a": "",
+            "d": ""
+          }
+        }
+      }
     }
   },
   "groupStageComplete": false,
