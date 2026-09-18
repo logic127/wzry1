@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -1561,11 +1561,23 @@
         </div>
         <div class="bracket-round">
           <div class="round-title">总决赛 (BO3)</div>
-          <div class="match" id="match-FINAL"><span class="match-tag">FINAL</span>
-            <div class="match-team" data-match="FINAL" data-side="t1"><span class="mt-name">—</span><span class="mt-seed">SF1胜者</span></div>
+          <div class="match" id="match-FINAL1"><span class="match-tag">G1</span>
+            <div class="match-team" data-match="FINAL1" data-side="t1"><span class="mt-name">—</span><span class="mt-seed">SF1胜者</span></div>
             <div class="match-vs">VS</div>
-            <div class="match-team" data-match="FINAL" data-side="t2"><span class="mt-name">—</span><span class="mt-seed">SF2胜者</span></div>
-            <button class="expand-btn" data-match="FINAL">四维录入</button>
+            <div class="match-team" data-match="FINAL1" data-side="t2"><span class="mt-name">—</span><span class="mt-seed">SF2胜者</span></div>
+            <button class="expand-btn" data-match="FINAL1">四维录入</button>
+          </div>
+          <div class="match" id="match-FINAL2"><span class="match-tag">G2</span>
+            <div class="match-team" data-match="FINAL2" data-side="t1"><span class="mt-name">—</span><span class="mt-seed">SF1胜者</span></div>
+            <div class="match-vs">VS</div>
+            <div class="match-team" data-match="FINAL2" data-side="t2"><span class="mt-name">—</span><span class="mt-seed">SF2胜者</span></div>
+            <button class="expand-btn" data-match="FINAL2">四维录入</button>
+          </div>
+          <div class="match" id="match-FINAL3"><span class="match-tag">G3</span>
+            <div class="match-team" data-match="FINAL3" data-side="t1"><span class="mt-name">—</span><span class="mt-seed">SF1胜者</span></div>
+            <div class="match-vs">VS</div>
+            <div class="match-team" data-match="FINAL3" data-side="t2"><span class="mt-name">—</span><span class="mt-seed">SF2胜者</span></div>
+            <button class="expand-btn" data-match="FINAL3">四维录入</button>
           </div>
           <div style="text-align:center; margin-top:16px;">
             <div style="color:#ffd700; font-size:14px; letter-spacing:2px;">全局BP · 三局两胜</div>
@@ -2620,15 +2632,23 @@
 
     // 初始化 knockout 状态（仅一次）
     if (!STATE.knockout._initialized) {
-      ['QF1','QF2','QF3','QF4','SF1','SF2','FINAL','PLA','PLB','P56','P78','TF'].forEach(m => {
+      ['QF1','QF2','QF3','QF4','SF1','SF2','FINAL1','FINAL2','FINAL3','PLA','PLB','P56','P78','TF'].forEach(m => {
         STATE.knockout[m] = { t1: null, t2: null, winner: null, stats: {} };
       });
       STATE.knockout._initialized = true;
     }
-    // 兼容旧数据：补齐 5-8 名首轮（PLA/PLB）
-    ['PLA','PLB'].forEach(m => {
+    // 兼容旧数据：补齐 5-8 名首轮（PLA/PLB）和总决赛三局（FINAL1/2/3）
+    ['PLA','PLB','FINAL1','FINAL2','FINAL3'].forEach(m => {
       if (!STATE.knockout[m]) STATE.knockout[m] = { t1: null, t2: null, winner: null, stats: {} };
     });
+    // 迁移旧 FINAL 数据到 FINAL1（若存在）
+    if (STATE.knockout.FINAL && !STATE.knockout.FINAL1.winner && STATE.knockout.FINAL.winner) {
+      STATE.knockout.FINAL1.t1 = STATE.knockout.FINAL.t1;
+      STATE.knockout.FINAL1.t2 = STATE.knockout.FINAL.t2;
+      STATE.knockout.FINAL1.winner = STATE.knockout.FINAL.winner;
+      STATE.knockout.FINAL1.stats = STATE.knockout.FINAL.stats || {};
+      delete STATE.knockout.FINAL;
+    }
 
     // 填充QF对阵（来自小组赛结果）
     ['QF1','QF2','QF3','QF4'].forEach(mId => {
@@ -2654,15 +2674,24 @@
         k.winner = null; k.stats = {};
       }
     });
-    // 决赛
-    STATE.knockout.FINAL.t1 = STATE.knockout.SF1.winner;
-    STATE.knockout.FINAL.t2 = STATE.knockout.SF2.winner;
-    {
-      const k = STATE.knockout.FINAL;
+    // 总决赛BO3：三局独立录入，每局都是SF1胜者 vs SF2胜者
+    const sf1Winner = STATE.knockout.SF1.winner;
+    const sf2Winner = STATE.knockout.SF2.winner;
+    ['FINAL1','FINAL2','FINAL3'].forEach(mId => {
+      STATE.knockout[mId].t1 = sf1Winner;
+      STATE.knockout[mId].t2 = sf2Winner;
+      const k = STATE.knockout[mId];
       if (k.winner && k.winner !== k.t1 && k.winner !== k.t2) {
         k.winner = null; k.stats = {};
       }
-    }
+    });
+    // 计算BO3总胜者（三局两胜）
+    const finalWins = { [sf1Winner]: 0, [sf2Winner]: 0 };
+    ['FINAL1','FINAL2','FINAL3'].forEach(mId => {
+      const w = STATE.knockout[mId].winner;
+      if (w) finalWins[w]++;
+    });
+    const champion = finalWins[sf1Winner] >= 2 ? sf1Winner : (finalWins[sf2Winner] >= 2 ? sf2Winner : null);
 
     // 3-4名争夺：SF败者
     const sf1Loser = STATE.knockout.SF1.t1 && STATE.knockout.SF1.t2 && STATE.knockout.SF1.winner
@@ -2706,7 +2735,7 @@
       const k = STATE.knockout[mId];
       const matchEl = document.getElementById(`match-${mId}`);
       if (!matchEl) return;
-      const tagText = mId === 'TF' ? '3RD' : (mId === 'FINAL' ? 'FINAL' : (mId === 'P56' ? '5-6' : (mId === 'P78' ? '7-8' : (mId === 'PLA' ? '5-8A' : (mId === 'PLB' ? '5-8B' : mId)))));
+      const tagText = mId === 'TF' ? '3RD' : (mId.startsWith('FINAL') ? mId : (mId === 'P56' ? '5-6' : (mId === 'P78' ? '7-8' : (mId === 'PLA' ? '5-8A' : (mId === 'PLB' ? '5-8B' : mId)))));
       // 重建对阵内容（保留外层match与按钮）
       const hasStatsBtn = matchEl.querySelector('.expand-btn');
       matchEl.innerHTML = `<span class="match-tag">${tagText}</span>
@@ -2733,7 +2762,9 @@
     renderMatch('QF4', SEED_MAP.QF4.t1, SEED_MAP.QF4.t2);
     renderMatch('SF1', 'QF1W', 'QF2W');
     renderMatch('SF2', 'QF3W', 'QF4W');
-    renderMatch('FINAL', 'SF1W', 'SF2W');
+    renderMatch('FINAL1', 'SF1W', 'SF2W');
+    renderMatch('FINAL2', 'SF1W', 'SF2W');
+    renderMatch('FINAL3', 'SF1W', 'SF2W');
     renderMatch('TF', 'SF1L', 'SF2L');
     renderMatch('PLA', 'QF1L', 'QF2L');
     renderMatch('PLB', 'QF3L', 'QF4L');
@@ -2741,7 +2772,6 @@
     renderMatch('P78', 'PLAL', 'PLBL');
 
     // 显示冠军
-    const champion = STATE.knockout.FINAL.winner;
     const champEl = document.getElementById('championDisplay');
     if (champEl) {
       champEl.style.display = champion ? 'block' : 'none';
@@ -2799,7 +2829,7 @@
     const content = document.getElementById('kstatsContent');
     const members1 = getTeamMembers(k.t1);
     const members2 = getTeamMembers(k.t2);
-    const tagText = mId === 'TF' ? '3-4名争夺' : (mId === 'FINAL' ? '总决赛' : (mId === 'P56' ? '5-6名争夺' : (mId === 'P78' ? '7-8名争夺' : (mId === 'PLA' ? '5-8名排位赛A' : (mId === 'PLB' ? '5-8名排位赛B' : mId)))));
+    const tagText = mId === 'TF' ? '3-4名争夺' : (mId.startsWith('FINAL') ? `总决赛${mId.replace('FINAL','')}` : (mId === 'P56' ? '5-6名争夺' : (mId === 'P78' ? '7-8名争夺' : (mId === 'PLA' ? '5-8名排位赛A' : (mId === 'PLB' ? '5-8名排位赛B' : mId)))));
     title.textContent = `${tagText} · 四维录入（${teamName(k.t1)} VS ${teamName(k.t2)}）`;
     content.innerHTML = `
       <div class="stats-grid">
@@ -2859,9 +2889,17 @@
     if (!body) return;
     const k = STATE.knockout;
     // 计算各名次
-    const champion = k.FINAL.winner;
-    const runnerUp = champion && k.FINAL.t1 && k.FINAL.t2
-      ? (champion === k.FINAL.t1 ? k.FINAL.t2 : k.FINAL.t1) : null;
+    // 冠军：BO3三局两胜
+    const sf1Winner = k.SF1.winner;
+    const sf2Winner = k.SF2.winner;
+    const finalWins = { [sf1Winner]: 0, [sf2Winner]: 0 };
+    ['FINAL1','FINAL2','FINAL3'].forEach(mId => {
+      const w = k[mId].winner;
+      if (w) finalWins[w]++;
+    });
+    const champion = finalWins[sf1Winner] >= 2 ? sf1Winner : (finalWins[sf2Winner] >= 2 ? sf2Winner : null);
+    const runnerUp = champion && sf1Winner && sf2Winner
+      ? (champion === sf1Winner ? sf2Winner : sf1Winner) : null;
     const third = k.TF.winner;
     const fourth = third && k.TF.t1 && k.TF.t2
       ? (third === k.TF.t1 ? k.TF.t2 : k.TF.t1) : null;
